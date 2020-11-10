@@ -80,7 +80,7 @@ export const uniCard = css({
   flexDirection: "column",
 });
 export const fileCard = css({
-  maxWidth: "150px",
+  // maxWidth: "150px",
   padding: "2rem",
   borderRadius: "10px",
   margin: "1rem",
