@@ -1,7 +1,49 @@
+html {
+  /** reset for androids*/
+  -webkit-tap-highlight-color: transparent;
+  /** default background color (check themes.css) */
+  --current-bg: var(--theme-1-bg);
+  /** default foreground color (check themes.css) */
+  --current-fg: var(--theme-1-fg);
+  /** font color when the code deteccts a dark theme */
+  --dark-theme-color: #fffffe;
+  /** font color when the code deteccts a light theme */
+  --light-theme-color: #1d1d1d;
+  /** mask overlay when we show modals */
+  --mask-color: rgba(48, 48, 48, 0.8);
+  /** default transition */
+  transition: 0.3s linear;
+  /** actually setting the colors */
+  background-color: var(--current-bg);
+  color: var(--current-text-color);
+}
+
 button {
   border: 2px solid #e3e3e3;
   background: white;
   border-radius: 5px;
-  margin-top: 10px;
   outline: none;
+}
+* {
+  font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+*:not(input) {
+  text-transform: lowercase;
+}
+a {
+  color: var(--current-fg);
+}
+
+@keyframes scale_anim {
+  from {
+    transform: scale(0.7);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+[disabled] {
+  pointer-events: none;
 }

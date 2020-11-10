@@ -7,7 +7,7 @@ const HTMLInlineCSSWebpackPlugin = require("html-inline-css-webpack-plugin")
 const WebpackModuleNoModulePlugin = require("webpack-module-nomodule-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const cfg = require("./.babelrc");
-const { autoPrefixCSS } = require("catom/dist/css");
+const { autoPrefixCSS } = require("catom/css");
 
 const mode = process.env.NODE_ENV;
 
@@ -58,10 +58,7 @@ function getEnvObject(isLegacy) {
 function getCfg(isLegacy) {
   return {
     cache: {
-      type: "filesystem",
-      buildDependencies: {
-        config: [__filename],
-      },
+      type: "memory",
     },
     devServer: {
       contentBase: `${__dirname}/docs`,
@@ -101,7 +98,7 @@ function getCfg(isLegacy) {
           options
         ) {
           let css = "";
-          //  css = await autoPrefixCSS();
+          css = await autoPrefixCSS();
           return {
             compilation,
             webpackConfig: compilation.options,
@@ -133,7 +130,7 @@ function getCfg(isLegacy) {
       new MiniCssExtractPlugin({}),
       isProd &&
         new OptimizeCSSAssetsPlugin({ cssProcessor: require("cssnano") }),
-      // isProd && new HTMLInlineCSSWebpackPlugin({}),
+      isProd && new HTMLInlineCSSWebpackPlugin({}),
       new WebpackModuleNoModulePlugin(isLegacy ? "legacy" : "modern"),
     ].filter(Boolean),
   };

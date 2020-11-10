@@ -1,9 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <link rel="preconnect" href="https://fonts.pycode.tk" crossorigin />
+    <link rel="preload" href="https://fonts.pycode.tk/poppins.css" as="style" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.pycode.tk/poppins.css"
+      media="print"
+      onload="this.media='all'"
+    />
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>UI Lib Starter</title>
+    <title>College Warden - college app management</title>
+    <meta
+      name="description"
+      content="College warden allows you to manage links to your college portals, other resources as well as documents in a secure manner"
+    />
     <base href="/" />
     <style>
       <%= htmlWebpackPlugin.options.css %>
@@ -16,11 +28,46 @@
         (document.head.appendChild(document.createElement("style")).innerText =
           "*{cursor:pointer}");
     </script>
+    <script>
+      (function () {
+        var prefix =
+          "var(--theme-" + (localStorage.getItem("theme") || 0) + "-";
+        var doc = document.documentElement;
+        doc.style.setProperty("--current-bg", prefix + "bg)");
+        doc.style.setProperty("--current-fg", prefix + "fg)");
+        doc.style.setProperty("--current-alpha", prefix + "alpha)");
+      })();
+    </script>
   </head>
 
   <body>
     <div id="app-mount">
       <noscript>This App uses JavaScript...</noscript>
     </div>
+    <template is="custom" custom-element="loading-spinner"
+      ><style>
+        .spinner {
+          height: 50px;
+          width: 50px;
+          margin: auto;
+          border-radius: 50%;
+          animation: rotate 0.8s infinite linear;
+          border: 6px solid transparent;
+          border-right-color: var(--current-fg);
+          border-bottom-color: var(--current-fg);
+          border-left-color: var(--current-fg);
+          transition: 0.3s linear;
+        }
+        @keyframes rotate {
+          from {
+            transform: rotate(0);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+      </style>
+      <div class="spinner"></div
+    ></template>
   </body>
 </html>

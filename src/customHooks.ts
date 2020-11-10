@@ -3,13 +3,19 @@ import {
   Router,
   useEffect,
   RouterSubscription,
+  useRef,
+  redirect,
 } from "@hydrophobefireman/ui-lib";
+import { useSharedStateValue } from "statedrive";
+import { authData } from "./state";
+
+import { auth } from "./util/auth";
 
 function useMount(fn: () => unknown | (() => void)) {
   return useEffect(fn, []);
 }
 
-const getPath = () => Router.path;
+const getPath = () => Router.path + Router.qs;
 export const useLocation = (): string => {
   const [loc, setLoc] = useState(getPath);
   useMount(() => {
@@ -33,4 +39,25 @@ export function useViewportSize(): [number, number] {
   });
 
   return dimensions;
+}
+interface CB {
+  (...args: any): void;
+}
+export function useInterval(callback: CB, delay?: number) {
+  const savedCallback = useRef<CB>();
+  savedCallback.current = callback;
+  useEffect(() => {
+    const tick = () => savedCallback.current();
+    if (delay !== null) {
+      let id = setInterval(tick, delay);
+      return () => clearInterval(id);
+    }
+  }, [delay]);
+}
+
+export function useRequiredAuthentication(path: string): void {
+  const data = useSharedStateValue(authData);
+  useEffect(() => {
+    if (!(data && data.user)) return redirect(`/login?next=${path}`);
+  }, [data && data.user]);
 }
