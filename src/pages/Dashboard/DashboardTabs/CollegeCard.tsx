@@ -44,8 +44,22 @@ export function CollegeCard({ data, setCollege }: CollegeCardProps) {
           data={new Date(data.decisionDate).toLocaleDateString()}
         />
         <div class={viewMoreWrapper}>
+          <a
+            target="_blank"
+            class={[
+              actionButton,
+              css({
+                paddingLeft: "5px",
+                paddingRight: "5px",
+                borderRadius: "5px",
+              }),
+            ]}
+            href={data.portalLink}
+          >
+            visit portal
+          </a>
           <button class={actionButton} onClick={() => setCollege(data)}>
-            view more
+            edit
           </button>
         </div>
       </div>

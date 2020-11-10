@@ -41,7 +41,7 @@ export const addButton = css({
 
 export const viewMoreWrapper = css({
   display: "flex",
-  flexDirection: "column",
+  flexDirection: "row",
   flex: 1,
   justifyContent: "flex-end",
   alignItems: "flex-end",
