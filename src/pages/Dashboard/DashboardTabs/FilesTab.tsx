@@ -9,7 +9,7 @@ import {
   getFileType,
   upload,
 } from "./FileUtil";
-import { actionButton, bold, center, mask } from "../../../styles";
+import { actionButton } from "../../../styles";
 import { actionButtonOverride, cardWrapper } from "./DashboadTabs.style";
 import { useEffect, useRef, useState } from "@hydrophobefireman/ui-lib";
 
@@ -18,7 +18,6 @@ import { DeleteIcon } from "../../../components/Icons/Delete";
 import { ExternalLinkIcon } from "../../../components/Icons/ExternalLink";
 import { ModalLayout } from "../../../components/Layout/ModalLayout";
 import { TabProps } from "../types";
-import { UploadIcon } from "../../../components/Icons/Upload";
 import { css } from "catom";
 import { decrypt } from "../../../crypto/decrypt";
 import { fileRoutes } from "../../../util/http/api_routes";
@@ -32,7 +31,8 @@ import {
 
 export function Files({ setMessage }: TabProps): any {
   const password = useSharedStateValue(passwordData);
-  const fileMetaList = useSharedStateValue<FileData[]>(files);
+  const $_unsortedfileMetaList = useSharedStateValue<FileData[]>(files);
+  const [fileMetaList, setList] = useState<FileData[]>(null);
   const [loading, setLoading] = useState(false);
   const [openFile, setOpen] = useState<FileData>(null);
   const [shouldDel, setDel] = useState<boolean>(false);
@@ -43,6 +43,19 @@ export function Files({ setMessage }: TabProps): any {
     getFileList(setMessage);
     return () => (abort.current = true);
   }, []);
+
+  useEffect(() => {
+    if (!password || !$_unsortedfileMetaList) return;
+    setList(
+      $_unsortedfileMetaList ||
+        ([] as any).sort((a, b) => {
+          const name1 = getFileName(a, password);
+          const name2 = getFileName(b, password);
+          if (name1 === name2) return 0;
+          return name1 > name2 ? 1 : -1;
+        })
+    );
+  }, [$_unsortedfileMetaList, password]);
 
   function confDelete() {
     setDel(true);

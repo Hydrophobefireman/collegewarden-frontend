@@ -15,7 +15,7 @@ export const userRoutes = {
 
 export const fileRoutes = {
   download: (id: string) => absoluteURL(`/files/${id}`),
-  delete: (id: string) => absoluteURL(`/files/${id}/delete`),
+  delete: absoluteURL(`/files/_/delete`),
   upload: absoluteURL("/files/upload/"),
   getInfoDict: absoluteURL("/info/"),
   uploadInfoDict: absoluteURL("/info/upload"),

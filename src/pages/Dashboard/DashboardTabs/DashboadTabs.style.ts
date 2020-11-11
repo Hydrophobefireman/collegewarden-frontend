@@ -92,6 +92,12 @@ export const fileCard = css({
   border: "none",
   color: "var(--current-color)",
   fontSize: "1rem",
+  wordBreak: "break-word",
+  media: {
+    "(max-width:500px)": {
+      width: "80%",
+    },
+  },
   pseudo: {
     ":hover": { background: "var(--current-alpha)", cursor: "pointer" },
   },

@@ -17,7 +17,16 @@ export function UploadFiles({ onClick }: { onClick?(): void }) {
       }}
       class={[actionButton]}
     >
-      <UploadIcon /> upload files
+      <UploadIcon />
+      <span
+        class={css({
+          media: {
+            "(max-width:500px)": { display: "none" },
+          },
+        })}
+      >
+        upload files
+      </span>
     </button>
   );
 }

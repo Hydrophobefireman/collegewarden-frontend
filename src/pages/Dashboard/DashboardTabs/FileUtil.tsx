@@ -9,6 +9,7 @@ import { encrypt } from "../../../crypto/encrypt";
 import { fileCard } from "./DashboadTabs.style";
 import { getArrayBufferFromUser } from "../../../util/file";
 import { set } from "statedrive";
+import { FakeWeakMap } from "@hydrophobefireman/j-utils";
 
 export async function upload(password: string) {
   const data = await getArrayBufferFromUser();
@@ -19,17 +20,15 @@ export async function upload(password: string) {
         name: fn(name),
         type: fn(type),
       });
-      return requests
-        .postBinary(fileRoutes.upload, encryptedBuf, {
-          "x-cw-iv": meta,
-          "x-cw-data-type": "encrypted_blob",
-        })
-        .result.then((x) => {
-          getFileList();
-          return x;
-        });
+      return requests.postBinary(fileRoutes.upload, encryptedBuf, {
+        "x-cw-iv": meta,
+        "x-cw-data-type": "encrypted_blob",
+      }).result;
     })
-  );
+  ).then((x) => {
+    getFileList();
+    return x;
+  });
 }
 interface FileEntryProps {
   data: FileData;
@@ -45,19 +44,35 @@ export function FileEntry({ data, password, open }: FileEntryProps) {
   );
 }
 
+const wm = new FakeWeakMap<FileData, { name?: string; type?: string }>();
 export function getFileName(data: FileData, password: string): string {
+  const cache = wm.get(data) || {};
+  if (cache.name) {
+    console.trace("cache hit", cache.name);
+    return cache.name;
+  }
   const meta = data.file_enc_meta;
-  return meta ? dec(password)(JSON.parse(meta).name) : "";
+  const ret = meta ? dec(password)(JSON.parse(meta).name) : "";
+  cache.name = ret;
+  wm.set(data, cache);
+  return ret;
 }
 
 export function getFileType(data: FileData, password: string): string {
+  const cache = wm.get(data) || {};
+  if (cache.type) {
+    return cache.name;
+  }
   const meta = data.file_enc_meta;
   const t = JSON.parse(meta).type;
-  return t ? dec(password)(t) : "application/octet-stream";
+  const ret = t ? dec(password)(t) : "application/octet-stream";
+  cache.type = ret;
+  wm.set(data, cache);
+  return ret;
 }
 export function deleteFile(f: FileData, fList: FileData[]) {
   const file_id = f.file_id;
-  requests.postJSON(fileRoutes.delete(file_id), { file_id });
+  requests.postJSON(fileRoutes.delete, { file_id });
   set(
     files,
     fList.filter((x) => x.file_id != f.file_id)
