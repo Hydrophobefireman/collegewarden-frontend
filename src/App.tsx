@@ -4,6 +4,7 @@ import { Init } from "./components/Layout";
 import { syncOnStateUpdates } from "./syncData";
 import "./App.css";
 import "./themes.css";
+import { dec } from "./crypto/util";
 init({
   "loading-spinner": {
     observedAttributes: [
@@ -22,5 +23,6 @@ syncOnStateUpdates();
 function App() {
   return <Init />;
 }
+console.log(dec);
 
 render(<App />, document.getElementById("app-mount"));

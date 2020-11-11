@@ -49,8 +49,8 @@ export function Files({ setMessage }: TabProps): any {
     setList(
       $_unsortedfileMetaList ||
         ([] as any).sort((a, b) => {
-          const name1 = getFileName(a, password);
-          const name2 = getFileName(b, password);
+          const name1 = getFileName(a, password).toLowerCase();
+          const name2 = getFileName(b, password).toLowerCase();
           if (name1 === name2) return 0;
           return name1 > name2 ? 1 : -1;
         })
@@ -60,16 +60,21 @@ export function Files({ setMessage }: TabProps): any {
   function confDelete() {
     setDel(true);
   }
-  function wrapUpload(u: Promise<{ error?: string }[]>) {
+  function wrapUpload(u: Promise<{ error?: string; name: string }[]>) {
     setMessage({ message: "Uploading files" });
     u.then((xArr) => {
+      const failedFiles = [];
       xArr.forEach((x) => {
-        const { error } = x;
-        return setMessage({
-          message: error || "upload successful",
-          isError: !!error,
-        });
+        const { error, name } = x;
+        if (error) failedFiles.push(name);
       });
+      const len = failedFiles.length;
+      if (len)
+        return setMessage({
+          message: `"${failedFiles.join(" , ")}" failed to upload`,
+          isError: true,
+        });
+      return setMessage({ message: "upload successful" });
     });
   }
 

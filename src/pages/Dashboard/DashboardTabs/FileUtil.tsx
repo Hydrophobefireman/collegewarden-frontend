@@ -11,7 +11,9 @@ import { getArrayBufferFromUser } from "../../../util/file";
 import { set } from "statedrive";
 import { FakeWeakMap } from "@hydrophobefireman/j-utils";
 
-export async function upload(password: string) {
+export async function upload(
+  password: string
+): Promise<{ data: unknown; error?: string; name: string }[]> {
   const data = await getArrayBufferFromUser();
   return Promise.all(
     data.map(async ({ buf, name, type }) => {
@@ -20,10 +22,12 @@ export async function upload(password: string) {
         name: fn(name),
         type: fn(type),
       });
-      return requests.postBinary(fileRoutes.upload, encryptedBuf, {
+      const res = requests.postBinary(fileRoutes.upload, encryptedBuf, {
         "x-cw-iv": meta,
         "x-cw-data-type": "encrypted_blob",
       }).result;
+      (res as any).name = name;
+      return res as any;
     })
   ).then((x) => {
     getFileList();
