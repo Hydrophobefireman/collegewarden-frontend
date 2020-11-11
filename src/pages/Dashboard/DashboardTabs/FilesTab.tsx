@@ -47,13 +47,15 @@ export function Files({ setMessage }: TabProps): any {
   function confDelete() {
     setDel(true);
   }
-  function wrapUpload(u: Promise<{ error?: string }>) {
+  function wrapUpload(u: Promise<{ error?: string }[]>) {
     setMessage({ message: "Uploading files" });
-    u.then((x) => {
-      const { error } = x;
-      return setMessage({
-        message: error || "upload successful",
-        isError: !!error,
+    u.then((xArr) => {
+      xArr.forEach((x) => {
+        const { error } = x;
+        return setMessage({
+          message: error || "upload successful",
+          isError: !!error,
+        });
       });
     });
   }

@@ -22,7 +22,7 @@ export function UploadFiles({ onClick }: { onClick?(): void }) {
   );
 }
 interface NoFilesFoundProps {
-  wrapUpload(p: Promise<{ error?: string }>): void;
+  wrapUpload(p: Promise<{ error?: string }[]>): void;
   password: string;
 }
 export function NoFilesFound({ wrapUpload, password }: NoFilesFoundProps) {
