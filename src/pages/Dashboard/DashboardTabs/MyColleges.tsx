@@ -18,6 +18,8 @@ function sortColleges(a: CollegeData, b: CollegeData): number {
   if (a.decisionTimeline === "ED2") {
     return -1;
   }
+  if (!a.applied) return -1;
+
   return a.decisionDate - b.decisionDate;
 }
 
@@ -25,7 +27,7 @@ export function MyColleges({ data }: Props) {
   const [college, setCollege] = useState<CollegeData>(null);
   const [cData, setCollegeData] = useSharedState(colleges);
   if (!data) return;
-  const rest = data.sort(sortColleges);
+  data.sort(sortColleges);
 
   return (
     <section>
@@ -39,6 +41,7 @@ export function MyColleges({ data }: Props) {
               x.collegeName === college.collegeName ? d : x
             );
             setCollegeData(draft);
+            setCollege(null);
           }}
           allowReadonlyMode={true}
         />
@@ -55,7 +58,7 @@ export function MyColleges({ data }: Props) {
         </span>
       </div>
       <div class={cardWrapper}>
-        {rest.map((x) => (
+        {data.map((x) => (
           <CollegeCard data={x} setCollege={setCollege} />
         ))}
       </div>

@@ -48,7 +48,7 @@ export function Files({ setMessage }: TabProps): any {
     setDel(true);
   }
   function wrapUpload(u: Promise<{ error?: string }>) {
-    setMessage({ message: "Uploading file" });
+    setMessage({ message: "Uploading files" });
     u.then((x) => {
       const { error } = x;
       return setMessage({

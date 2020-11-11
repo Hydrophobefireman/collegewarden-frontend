@@ -19,7 +19,7 @@ export function Deadline({
 
   return (
     <div class={inlineContainer}>
-      <div>application deadline</div>
+      <div>decision deadline</div>
       <input
         disabled={disabled}
         ref={input}

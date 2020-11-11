@@ -36,7 +36,16 @@ export function CollegeCard({ data, setCollege }: CollegeCardProps) {
       <div class={infoWrap}>
         <Info
           title="decision timeline"
-          data={data.decisionTimeline}
+          data={
+            <>
+              {data.decisionTimeline}{" "}
+              {!data.applied && (
+                <span class={css({ color: "var(--current-fg)" })}>
+                  (application pending!)
+                </span>
+              )}
+            </>
+          }
           className={isEd(data) ? css({ color: "var(--current-fg)" }) : bold}
         />
         <Info
@@ -73,7 +82,7 @@ function Info({
   className = "",
 }: {
   title: string;
-  data: string;
+  data: string | JSX.Element;
   className?: string;
 }) {
   return (

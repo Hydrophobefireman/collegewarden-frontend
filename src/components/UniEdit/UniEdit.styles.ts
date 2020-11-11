@@ -26,6 +26,7 @@ export const notesArea = css({
   borderRadius: "10px",
   padding: ".5rem",
   color: "var(--current-text-color)",
+  textTransform: "none",
 });
 
 export const modalCollegeName = [
@@ -53,3 +54,9 @@ export const modalActionButton = [
 ];
 
 export const modalActionText = css({ marginLeft: "0.5rem" });
+
+export const closeButton = css({
+  position: "absolute",
+  right: "0",
+  top: "0",
+});

@@ -11,21 +11,25 @@ import { getArrayBufferFromUser } from "../../../util/file";
 import { set } from "statedrive";
 
 export async function upload(password: string) {
-  const { buf, name, type } = await getArrayBufferFromUser();
-  const fn = enc(password);
-  const { encryptedBuf, meta } = await encrypt(buf, password, {
-    name: fn(name),
-    type: fn(type),
-  });
-  return requests
-    .postBinary(fileRoutes.upload, encryptedBuf, {
-      "x-cw-iv": meta,
-      "x-cw-data-type": "encrypted_blob",
+  const data = await getArrayBufferFromUser();
+  return Promise.all(
+    data.map(async ({ buf, name, type }) => {
+      const fn = enc(password);
+      const { encryptedBuf, meta } = await encrypt(buf, password, {
+        name: fn(name),
+        type: fn(type),
+      });
+      return requests
+        .postBinary(fileRoutes.upload, encryptedBuf, {
+          "x-cw-iv": meta,
+          "x-cw-data-type": "encrypted_blob",
+        })
+        .result.then((x) => {
+          getFileList();
+          return x;
+        });
     })
-    .result.then((x) => {
-      getFileList();
-      return x;
-    });
+  );
 }
 interface FileEntryProps {
   data: FileData;

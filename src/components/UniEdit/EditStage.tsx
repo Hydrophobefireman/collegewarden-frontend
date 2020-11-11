@@ -15,6 +15,7 @@ import {
   modalCollegeName,
   modalActionButton,
   modalSection,
+  closeButton,
 } from "./UniEdit.styles";
 import { EditIcon } from "../Icons/Edit";
 import { ModalLayout } from "../Layout/ModalLayout";
@@ -94,6 +95,13 @@ export function EditStage({
   }
   return (
     <ModalLayout close={close}>
+      <button
+        onClick={close}
+        class={[actionButton, closeButton]}
+        style={{ fontSize: "2rem", fontWeight: "normal" }}
+      >
+        ✖
+      </button>
       <div>
         <b class={modalCollegeName}>{name}</b>
         <section class={modalSection}>
