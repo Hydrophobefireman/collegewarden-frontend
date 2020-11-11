@@ -23,6 +23,7 @@ export function NameLogo({ text, size }: NameLogoProps) {
           ":hover": {
             background: "var(--current-alpha)",
           },
+          ":focus": { background: "var(--current-alpha)" },
         },
       })}
     >

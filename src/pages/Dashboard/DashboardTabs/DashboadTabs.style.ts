@@ -80,7 +80,7 @@ export const uniCard = css({
   flexDirection: "column",
 });
 export const fileCard = css({
-  // maxWidth: "150px",
+  width: "200px",
   padding: "2rem",
   borderRadius: "10px",
   margin: "1rem",
@@ -91,15 +91,19 @@ export const fileCard = css({
   background: "transparent",
   border: "none",
   color: "var(--current-color)",
+  textAlign: "left",
   fontSize: "1rem",
   wordBreak: "break-word",
+  justifyContent: "center",
+  cursor: "pointer",
   media: {
     "(max-width:500px)": {
       width: "80%",
     },
   },
   pseudo: {
-    ":hover": { background: "var(--current-alpha)", cursor: "pointer" },
+    ":hover": { background: "var(--current-alpha)" },
+    ":focus": { background: "var(--current-alpha)" },
   },
 });
 export const cardWrapper = css({

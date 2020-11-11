@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "@hydrophobefireman/ui-lib";
 import { css } from "catom";
 import { UploadIcon } from "../../../components/Icons/Upload";
 import { ModalLayout } from "../../../components/Layout/ModalLayout";
@@ -67,8 +68,13 @@ export function DeleteConfirmation({
   onCancel,
   onDelete,
 }: DelConfProps) {
+  const ref = useRef<HTMLButtonElement>();
+  useEffect(() => {
+    const { current } = ref;
+    current && current.focus();
+  });
   return (
-    <ModalLayout>
+    <ModalLayout close={onCancel}>
       <div>
         are you sure you want to delete{" "}
         <b class={[bold, css({ color: "var(--current-fg)" })]}>
@@ -80,7 +86,7 @@ export function DeleteConfirmation({
         <button class={actionButton} onClick={onCancel}>
           cancel
         </button>
-        <button class={actionButton} onClick={onDelete}>
+        <button class={actionButton} onClick={onDelete} ref={ref}>
           delete
         </button>
       </div>

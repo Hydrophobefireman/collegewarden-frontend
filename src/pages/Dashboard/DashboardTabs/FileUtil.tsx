@@ -26,8 +26,11 @@ export async function upload(
         "x-cw-iv": meta,
         "x-cw-data-type": "encrypted_blob",
       }).result;
-      (res as any).name = name;
-      return res as any;
+
+      return res.then((x: any) => {
+        x.name = name;
+        return x as any;
+      });
     })
   ).then((x) => {
     getFileList();

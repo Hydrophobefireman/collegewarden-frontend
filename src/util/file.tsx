@@ -16,7 +16,7 @@ export async function getArrayBufferFromUser() {
     files.map(async (file) => ({
       buf: await asArrayBuffer(file),
       name: file.name,
-      type: file.type,
+      type: file.type || "application/octet-stream",
     }))
   );
 }

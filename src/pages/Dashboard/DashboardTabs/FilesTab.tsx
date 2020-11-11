@@ -38,6 +38,14 @@ export function Files({ setMessage }: TabProps): any {
   const [shouldDel, setDel] = useState<boolean>(false);
   const [downloadingState, setDownloading] = useState<string>(null);
   const abort = useRef(false);
+  const focus = useRef<HTMLButtonElement>();
+
+  useEffect(() => {
+    if (openFile) {
+      const { current } = focus;
+      current.focus();
+    }
+  }, [openFile]);
   useEffect(() => {
     setLoading(true);
     getFileList(setMessage);
@@ -48,6 +56,7 @@ export function Files({ setMessage }: TabProps): any {
     if (!password || !$_unsortedfileMetaList) return;
     setList(
       $_unsortedfileMetaList.sort((a, b) => {
+        if (!password) return 0;
         const name1 = getFileName(a, password).toLowerCase();
         const name2 = getFileName(b, password).toLowerCase();
         if (name1 === name2) return 0;
@@ -158,6 +167,7 @@ export function Files({ setMessage }: TabProps): any {
                   style={actionButtonOverride}
                   data-id={openFile.file_id}
                   onClick={openFileExternally}
+                  ref={focus}
                 >
                   <ExternalLinkIcon />
                   open
