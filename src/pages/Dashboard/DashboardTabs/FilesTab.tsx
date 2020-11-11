@@ -47,13 +47,12 @@ export function Files({ setMessage }: TabProps): any {
   useEffect(() => {
     if (!password || !$_unsortedfileMetaList) return;
     setList(
-      $_unsortedfileMetaList ||
-        ([] as any).sort((a, b) => {
-          const name1 = getFileName(a, password).toLowerCase();
-          const name2 = getFileName(b, password).toLowerCase();
-          if (name1 === name2) return 0;
-          return name1 > name2 ? 1 : -1;
-        })
+      $_unsortedfileMetaList.sort((a, b) => {
+        const name1 = getFileName(a, password).toLowerCase();
+        const name2 = getFileName(b, password).toLowerCase();
+        if (name1 === name2) return 0;
+        return name1 > name2 ? 1 : -1;
+      })
     );
   }, [$_unsortedfileMetaList, password]);
 
