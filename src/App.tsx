@@ -4,6 +4,7 @@ import { Init } from "./components/Layout";
 import { syncOnStateUpdates } from "./syncData";
 import "./App.css";
 import "./themes.css";
+
 init({
   "loading-spinner": {
     observedAttributes: [

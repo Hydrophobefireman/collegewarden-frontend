@@ -75,9 +75,11 @@ export const uniCard = css({
   borderRadius: "10px",
   margin: "1rem",
   boxShadow: "var(--box-shadow)",
+
   transition: "0.3s linear",
   display: "flex",
   flexDirection: "column",
+  pseudo: { ":hover": { boxShadow: "1.2px 1.2px 1.2px 1.2px var(--current-alpha)" } },
 });
 export const fileCard = css({
   width: "200px",
