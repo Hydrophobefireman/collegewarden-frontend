@@ -48,7 +48,6 @@ const wm = new FakeWeakMap<FileData, { name?: string; type?: string }>();
 export function getFileName(data: FileData, password: string): string {
   const cache = wm.get(data) || {};
   if (cache.name) {
-    console.trace("cache hit", cache.name);
     return cache.name;
   }
   const meta = data.file_enc_meta;
