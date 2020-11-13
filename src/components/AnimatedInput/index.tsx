@@ -6,6 +6,7 @@ import {
   useMemo,
   useState,
   ComponentChild,
+  useRef,
 } from "@hydrophobefireman/ui-lib";
 import {
   errorCss,
@@ -44,12 +45,23 @@ export function AnimatedInput(props: InputProps): VNode {
   } = props;
 
   const [value, setValue] = useState(props.value || "");
-
-  useEffect(() => setValue(props.value), [props.value]);
-
+  const ref = useRef<HTMLInputElement>();
+  const selectionRange = useRef<[number, number]>([0, 0]);
+  $ref && ($ref.current = ref.current);
+  useEffect(() => {
+    setValue(props.value);
+  }, [props.value]);
+  useEffect(() => {
+    const { current } = ref;
+    const [s, e] = selectionRange.current;
+    current.setSelectionRange(s, e);
+  }, [selectionRange.current]);
   function handleInput(e: JSX.TargetedKeyboardEvent<HTMLInputElement>): void {
     const val = (e.target as HTMLInputElement).value;
     setValue(val);
+    const { current } = ref;
+    current &&
+      (selectionRange.current = [current.selectionStart, current.selectionEnd]);
     propOnInput && propOnInput(val);
   }
   //   active || errorText ? moveUp : moveDown
@@ -64,7 +76,7 @@ export function AnimatedInput(props: InputProps): VNode {
         value={value}
         data-error={!!errorText}
         class={[paperInput].concat(inputClass)}
-        ref={$ref}
+        ref={ref}
         data-should-focus={!!value}
         {...rest}
       />
