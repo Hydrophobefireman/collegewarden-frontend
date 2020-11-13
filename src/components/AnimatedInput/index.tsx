@@ -53,6 +53,7 @@ export function AnimatedInput(props: InputProps): VNode {
   }, [props.value]);
   useEffect(() => {
     const { current } = ref;
+    if (!current) return;
     const [s, e] = selectionRange.current;
     current.setSelectionRange(s, e);
   }, [selectionRange.current]);
