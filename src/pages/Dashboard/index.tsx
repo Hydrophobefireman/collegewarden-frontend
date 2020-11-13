@@ -12,20 +12,20 @@ import { dashboardDataSection } from "./Dashboard.styles";
 import { DashboardNav } from "./DashboardNav";
 import { Files } from "./DashboardTabs/FilesTab";
 import { Search } from "./DashboardTabs/SearchTab";
-import { set, useSharedState } from "statedrive";
+import { get, set, useSharedState } from "statedrive";
 import {
   CollegeData,
   colleges,
   didFetch,
   FileData,
+  files,
   passwordData,
 } from "../../state";
 import { PasswordInput } from "../../components/PasswordInput";
 import * as requests from "../../util/http/requests";
 import { fileRoutes } from "../../util/http/api_routes";
 import { decryptJson } from "../../crypto/decrypt";
-import { ChunkLoading } from "../../components/ChunkLoadingComponent";
-import { IntdeterminateLoader } from "../../components/LoadingIndicator";
+import { evictWeakMapCache } from "../../components/FileInfo/FileUtil";
 
 interface DashboardProps {
   params: { [k: string]: string };
@@ -54,14 +54,13 @@ export default function Dashboard(props: DashboardProps) {
   const [collegeData, setCData] = useSharedState(colleges);
   const [loading, setLoading] = useState(false);
   const [pass, setPass] = useSharedState(passwordData);
+  const [downloadRes, setDownloadRes] = useState(null);
   useEffect(() => {
-    if (!pass) return;
     !collegeData && setLoading(true);
     const { controller, result } = requests.get<{ info_dict: FileData }>(
       fileRoutes.getInfoDict
     );
     (async () => {
-      set(didFetch, true);
       const { data, error } = await result;
       setLoading(false);
       if (error) {
@@ -80,25 +79,42 @@ export default function Dashboard(props: DashboardProps) {
       ).result;
       setLoading(false);
       if (downloadResult instanceof ArrayBuffer) {
-        const resp = await decryptJson(
-          { encryptedBuf: downloadResult, meta: file_enc_meta },
-          pass
-        );
-        if (resp.error) {
-          setPass("");
-
-          return setMessage({
-            message: resp.error || "could not decrypt",
-            isError: true,
-          });
-        }
-        return setCData(resp);
+        return setDownloadRes({ res: downloadResult, file_enc_meta });
       }
-
       return setMessage({ message: downloadResult.error, isError: true });
     })();
     return () => controller.abort();
-  }, [pass]);
+  }, []);
+
+  useEffect(() => {
+    if (!downloadRes || !pass) return;
+    const { res, file_enc_meta } = downloadRes;
+    (async () => {
+      const resp = await decryptJson(
+        { encryptedBuf: res, meta: file_enc_meta },
+        pass
+      );
+      if (resp.error) {
+        setPass("");
+        const prevFiles = get(files);
+        if (prevFiles && prevFiles.length) {
+          // the weakmap has erroneously cached
+          // the incorrectly decrypted filenames
+          // we could either clone all the FileData
+          // objects individually (since it's a weakmap, we don't really face a memory leak)
+          // or we could just evict them ourselves
+          // which is better than cloning multiple objects again and again
+          prevFiles.forEach((x) => evictWeakMapCache(x));
+        }
+        return setMessage({
+          message: resp.error || "could not decrypt",
+          isError: true,
+        });
+      }
+      set(didFetch, true);
+      return setCData(resp);
+    })();
+  }, [downloadRes, pass]);
 
   return (
     <div>

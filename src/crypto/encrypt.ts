@@ -23,6 +23,6 @@ export async function encrypt(
   };
 }
 const encoder = new TextEncoder();
-export function encryptJson(json: object, password: string) {
-  return encrypt(encoder.encode(JSON.stringify(json)), password);
+export function encryptJson(json: object, password: string, additional?: any) {
+  return encrypt(encoder.encode(JSON.stringify(json)), password, additional);
 }

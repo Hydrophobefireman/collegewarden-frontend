@@ -1,5 +1,4 @@
-import * as requests from "../../../util/http/requests";
-
+// TODO restructure
 import { FileData, files, passwordData } from "../../../state";
 import {
   FileEntry,
@@ -8,44 +7,53 @@ import {
   getFileName,
   getFileType,
   upload,
-} from "./FileUtil";
-import { actionButton } from "../../../styles";
-import { actionButtonOverride, cardWrapper } from "./DashboadTabs.style";
+  getDecryptedFileProp,
+} from "../../../components/FileInfo/FileUtil";
+import { cardWrapper } from "./DashboadTabs.style";
 import { useEffect, useRef, useState } from "@hydrophobefireman/ui-lib";
 
-import { $req } from "./util";
-import { DeleteIcon } from "../../../components/Icons/Delete";
-import { ExternalLinkIcon } from "../../../components/Icons/ExternalLink";
-import { ModalLayout } from "../../../components/Layout/ModalLayout";
+import { openFileExternally, searchFiles, wrapUpload } from "./util";
 import { TabProps } from "../types";
 import { css } from "catom";
-import { decrypt } from "../../../crypto/decrypt";
-import { fileRoutes } from "../../../util/http/api_routes";
 import { useSharedStateValue } from "statedrive";
 import {
-  DeleteConfirmation,
   FileTabLoader,
   NoFilesFound,
   UploadFiles,
+  UploadNotes,
 } from "./FileTabActions";
+import { FileInfo } from "../../../components/FileInfo";
+import { NoteEditor } from "../../../components/NoteEditor";
+import { DeleteConfirmation } from "../../../components/DeleteConfirmation";
+import { Note } from "../../../components/FileInfo/Note";
+import { bold } from "../../../styles";
+import { AnimatedInput } from "../../../components/AnimatedInput";
 
 export function Files({ setMessage }: TabProps): any {
   const password = useSharedStateValue(passwordData);
-  const $_unsortedfileMetaList = useSharedStateValue<FileData[]>(files);
-  const [fileMetaList, setList] = useState<FileData[]>(null);
+  const unFilteredUnsortedfilesAndNotes = useSharedStateValue<FileData[]>(
+    files
+  );
+  const [sortedFileList, setList] = useState<FileData[]>(null);
+  const [sortedNoteList, setNoteList] = useState<FileData[]>(null);
   const [loading, setLoading] = useState(false);
   const [openFile, setOpen] = useState<FileData>(null);
   const [shouldDel, setDel] = useState<boolean>(false);
   const [downloadingState, setDownloading] = useState<string>(null);
+  const [notes, setNotes] = useState<FileData | boolean>(null);
   const abort = useRef(false);
-  const focus = useRef<HTMLButtonElement>();
-
+  const [search, setSearch] = useState("");
+  const [filteredUnsortedFilesAndNotes, setFilteredData] = useState<FileData[]>(
+    null
+  );
   useEffect(() => {
-    if (openFile) {
-      const { current } = focus;
-      current.focus();
-    }
-  }, [openFile]);
+    return searchFiles(
+      search,
+      password,
+      unFilteredUnsortedfilesAndNotes,
+      setFilteredData
+    );
+  }, [search, unFilteredUnsortedfilesAndNotes, password]);
   useEffect(() => {
     setLoading(true);
     getFileList(setMessage);
@@ -53,138 +61,156 @@ export function Files({ setMessage }: TabProps): any {
   }, []);
 
   useEffect(() => {
-    if (!password || !$_unsortedfileMetaList) return;
+    if (!password || !filteredUnsortedFilesAndNotes) return;
+    const unsortedFiles: FileData[] = [];
+    const unsortedNotes: FileData[] = [];
+    filteredUnsortedFilesAndNotes.forEach((x) => {
+      const t = getFileType(x, password);
+
+      if (t === "x-collegewarden/note") {
+        unsortedNotes.push(x);
+      } else unsortedFiles.push(x);
+    });
+    setNoteList(
+      unsortedNotes.sort((a, b) => {
+        const ts1 = +getDecryptedFileProp(a, password, "ts");
+        const ts2 = +getDecryptedFileProp(b, password, "ts");
+        return ts1 - ts2;
+      })
+    );
     setList(
-      $_unsortedfileMetaList.sort((a, b) => {
-        if (!password) return 0;
+      unsortedFiles.sort((a, b) => {
         const name1 = getFileName(a, password).toLowerCase();
         const name2 = getFileName(b, password).toLowerCase();
         if (name1 === name2) return 0;
         return name1 > name2 ? 1 : -1;
       })
     );
-  }, [$_unsortedfileMetaList, password]);
+  }, [filteredUnsortedFilesAndNotes, password]);
 
-  function confDelete() {
-    setDel(true);
-  }
-  function wrapUpload(u: Promise<{ error?: string; name: string }[]>) {
-    setMessage({ message: "Uploading files" });
-    u.then((xArr) => {
-      const failedFiles = [];
-      xArr.forEach((x) => {
-        const { error, name } = x;
-        if (error) failedFiles.push(name);
-      });
-      const len = failedFiles.length;
-      if (len)
-        return setMessage({
-          message: `"${failedFiles.join(" , ")}" failed to upload`,
-          isError: true,
-        });
-      return setMessage({ message: "upload successful" });
-    });
-  }
-
-  function openFileExternally() {
-    setDownloading("downloading file..");
-    requests
-      .getBinary(fileRoutes.download(openFile.file_id))
-      .result.then(async (x) => {
-        setDownloading(null);
-        if (abort.current) return;
-        if ("error" in x)
-          return setMessage({ message: x.error, isError: true });
-
-        const buf = x as ArrayBuffer;
-
-        setDownloading("decrypting file...");
-        const ret = await decrypt(
-          { encryptedBuf: buf, meta: openFile.file_enc_meta },
-          password
-        );
-        setDownloading(null);
-        if ("error" in ret) {
-          return setMessage({ error: ret.error, isError: true });
-        }
-        const blob = new Blob([ret], { type: getFileType(openFile, password) });
-        const url = URL.createObjectURL(blob);
-        const a = Object.assign(document.createElement("a"), {
-          target: "_blank",
-          href: url,
-        });
-        a.click();
-        $req(() => URL.revokeObjectURL(url));
-        setOpen(null);
-      });
-  }
   if (shouldDel)
     return (
       <DeleteConfirmation
-        openFile={openFile}
-        password={password}
+        name={getFileName(openFile, password)}
         onCancel={() => setDel(null)}
         onDelete={() => {
-          deleteFile(openFile, fileMetaList);
+          deleteFile(openFile, unFilteredUnsortedfilesAndNotes);
           setOpen(null);
           setDel(null);
         }}
       />
     );
-  if (fileMetaList == null && loading && password) return <FileTabLoader />;
-  if (fileMetaList && fileMetaList.length == 0) {
-    return <NoFilesFound password={password} wrapUpload={wrapUpload} />;
+  if (sortedFileList == null && loading && password) return <FileTabLoader />;
+  if (
+    unFilteredUnsortedfilesAndNotes &&
+    unFilteredUnsortedfilesAndNotes.length == 0
+  ) {
+    return (
+      <NoFilesFound
+        password={password}
+        wrapUpload={(u) => wrapUpload(u, setMessage)}
+      />
+    );
   }
-  if (fileMetaList && password) {
+  if (password) {
     return (
       <section>
+        <div class={css({ marginTop: "1rem", marginBottom: "1rem" })}>
+          <AnimatedInput
+            labelText="search"
+            value={search}
+            onInput={setSearch}
+          />
+        </div>
+        {notes && (
+          <NoteEditor
+            close={() => setNotes(null)}
+            list={filteredUnsortedFilesAndNotes}
+            data={typeof notes === "boolean" ? null : notes}
+            password={password}
+            setMessage={setMessage}
+          />
+        )}
         {openFile && (
-          <ModalLayout close={() => setOpen(null)}>
-            <div>
-              <div>
-                <b
-                  class={css({
-                    color: "var(--current-fg)",
-                    fontWeight: "bold",
-                  })}
-                >
-                  {getFileName(openFile, password)}
-                </b>
-              </div>
-              <div>{downloadingState && <span>{downloadingState}</span>}</div>
-              <div class={css({ marginTop: "2rem", textAlign: "right" })}>
-                <button
-                  data-id={openFile.file_id}
-                  class={actionButton}
-                  style={actionButtonOverride}
-                  onClick={confDelete}
-                >
-                  <DeleteIcon />
-                  delete
-                </button>
-                <button
-                  class={actionButton}
-                  style={actionButtonOverride}
-                  data-id={openFile.file_id}
-                  onClick={openFileExternally}
-                  ref={focus}
-                >
-                  <ExternalLinkIcon />
-                  open
-                </button>
-              </div>
-            </div>
-          </ModalLayout>
+          <FileInfo
+            downloadingState={downloadingState}
+            openFile={openFile}
+            openFileExternally={() =>
+              openFileExternally({
+                abort,
+                openFile,
+                password,
+                setDownloading,
+                setMessage,
+                setOpen,
+              })
+            }
+            password={password}
+            setDelete={() => setDel(true)}
+            setOpen={setOpen}
+          />
         )}
         <div class={css({ marginTop: "2rem", textAlign: "right" })}>
-          <UploadFiles onClick={() => wrapUpload(upload(password))} />
+          <UploadFiles
+            onClick={() => wrapUpload(upload(password), setMessage)}
+          />
+          <UploadNotes onClick={() => setNotes(true)} />
         </div>
-        <div class={cardWrapper}>
-          {fileMetaList.map((x) => (
-            <FileEntry data={x} password={password} open={(x) => setOpen(x)} />
-          ))}
+        <div>
+          <div>
+            <b
+              class={[
+                bold,
+                css({ color: "var(--current-fg)", fontSize: "2rem" }),
+              ]}
+            >
+              notes
+            </b>
+          </div>
+          {truthyArr(sortedNoteList) ? (
+            <div class={cardWrapper}>
+              {sortedNoteList.map((x) => (
+                <Note
+                  data={x}
+                  open={() => {
+                    setNotes(x);
+                  }}
+                  password={password}
+                />
+              ))}
+            </div>
+          ) : (
+            <div>No notes found</div>
+          )}
+        </div>
+        <div>
+          <div>
+            <b
+              class={[
+                bold,
+                css({ color: "var(--current-fg)", fontSize: "2rem" }),
+              ]}
+            >
+              files
+            </b>
+          </div>
+          {truthyArr(sortedFileList) ? (
+            <div class={cardWrapper}>
+              {sortedFileList.map((x) => (
+                <FileEntry
+                  data={x}
+                  password={password}
+                  open={(x) => setOpen(x)}
+                />
+              ))}
+            </div>
+          ) : (
+            <div>no files found</div>
+          )}
         </div>
       </section>
     );
   }
 }
+
+const truthyArr = (x: any[]) => x && x.length > 0;

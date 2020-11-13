@@ -5,29 +5,37 @@ import { EditStage } from "../../../components/UniEdit/EditStage";
 import { css } from "catom";
 import { heading } from "../../../styles";
 import { useSharedState } from "statedrive";
-import { useState } from "@hydrophobefireman/ui-lib";
+import { useMemo, useState } from "@hydrophobefireman/ui-lib";
 import { cardWrapper } from "./DashboadTabs.style";
 
 interface Props {
   data: CollegeData[];
 }
 
-function sortColleges(a: CollegeData, b: CollegeData): number {
-  if (a.decisionTimeline === "ED") return -1;
-  if (b.decisionTimeline === "ED") return 1;
-  if (a.decisionTimeline === "ED2") {
+function defaultSort(a: CollegeData, b: CollegeData): number {
+  const timelineA = a.decisionTimeline;
+  const timelineB = b.decisionTimeline;
+  if (timelineA === "ED" && timelineB !== "ED") return -1;
+  if (timelineB === "ED") return 1;
+  if (timelineA === "ED2" && timelineB !== "ED2") {
     return -1;
   }
-  if (!a.applied) return -1;
+  if (timelineB === "ED2") return 1;
 
-  return a.decisionDate - b.decisionDate;
+  if (!a.applied && b.applied) return -1;
+  const nameA = a.collegeName;
+  const nameB = b.collegeName;
+  return (
+    a.decisionDate - b.decisionDate ||
+    (nameA > nameB ? 1 : nameB > nameA ? -1 : 0)
+  );
 }
 
-export function MyColleges({ data }: Props) {
+export function MyColleges({ data: _data }: Props) {
   const [college, setCollege] = useState<CollegeData>(null);
   const [cData, setCollegeData] = useSharedState(colleges);
-  if (!data) return;
-  data.sort(sortColleges);
+  if (!_data) return;
+  const data = useMemo(() => _data.slice().sort(defaultSort), [_data]);
 
   return (
     <section>

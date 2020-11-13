@@ -1,21 +1,21 @@
-import { useEffect, useRef } from "@hydrophobefireman/ui-lib";
 import { css } from "catom";
+import { NotesIcon } from "../../../components/Icons/Notes";
 import { UploadIcon } from "../../../components/Icons/Upload";
-import { ModalLayout } from "../../../components/Layout/ModalLayout";
-import { FileData } from "../../../state";
-import { actionButton, bold, center, mask } from "../../../styles";
-import { getFileName, upload } from "./FileUtil";
+import { actionButton, center, mask } from "../../../styles";
+import { upload } from "../../../components/FileInfo/FileUtil";
+
+const uploadButtonOverride = {
+  display: "inline-flex",
+  border: "2px solid var(--current-fg)",
+  color: "var(--current-text-color)",
+  padding: "0.5rem",
+};
 
 export function UploadFiles({ onClick }: { onClick?(): void }) {
   return (
     <button
       onClick={onClick}
-      style={{
-        display: "inline-flex",
-        border: "2px solid var(--current-fg)",
-        color: "var(--current-text-color)",
-        padding: "0.5rem",
-      }}
+      style={uploadButtonOverride}
       class={[actionButton]}
     >
       <UploadIcon />
@@ -31,8 +31,29 @@ export function UploadFiles({ onClick }: { onClick?(): void }) {
     </button>
   );
 }
+
+export function UploadNotes({ onClick }: { onClick?(): void }) {
+  return (
+    <button
+      onClick={onClick}
+      style={uploadButtonOverride}
+      class={[actionButton]}
+    >
+      <NotesIcon />
+      <span
+        class={css({
+          media: {
+            "(max-width:500px)": { display: "none" },
+          },
+        })}
+      >
+        upload notes
+      </span>
+    </button>
+  );
+}
 interface NoFilesFoundProps {
-  wrapUpload(p: Promise<{ error?: string }[]>): void;
+  wrapUpload(p: Promise<{ error?: string; name?: string }[]>): void;
   password: string;
 }
 export function NoFilesFound({ wrapUpload, password }: NoFilesFoundProps) {
@@ -53,43 +74,5 @@ export function FileTabLoader() {
     <div class={mask}>
       <loading-spinner />
     </div>
-  );
-}
-interface DelConfProps {
-  openFile: FileData;
-  password: string;
-  onCancel(): void;
-  onDelete(): void;
-}
-
-export function DeleteConfirmation({
-  openFile,
-  password,
-  onCancel,
-  onDelete,
-}: DelConfProps) {
-  const ref = useRef<HTMLButtonElement>();
-  useEffect(() => {
-    const { current } = ref;
-    current && current.focus();
-  });
-  return (
-    <ModalLayout close={onCancel}>
-      <div>
-        are you sure you want to delete{" "}
-        <b class={[bold, css({ color: "var(--current-fg)" })]}>
-          {getFileName(openFile, password)}
-        </b>
-        ?
-      </div>
-      <div class={css({ textAlign: "right" })}>
-        <button class={actionButton} onClick={onCancel}>
-          cancel
-        </button>
-        <button class={actionButton} onClick={onDelete} ref={ref}>
-          delete
-        </button>
-      </div>
-    </ModalLayout>
   );
 }

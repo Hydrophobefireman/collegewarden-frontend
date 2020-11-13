@@ -1,13 +1,13 @@
-import * as requests from "../../../util/http/requests";
+import * as requests from "../../util/http/requests";
 
-import { FileData, files } from "../../../state";
-import { dec, enc } from "../../../crypto/util";
-import { fileRoutes, userRoutes } from "../../../util/http/api_routes";
+import { FileData, files } from "../../state";
+import { dec, enc } from "../../crypto/util";
+import { fileRoutes, userRoutes } from "../../util/http/api_routes";
 
-import { TabProps } from "../types";
-import { encrypt } from "../../../crypto/encrypt";
-import { fileCard } from "./DashboadTabs.style";
-import { getArrayBufferFromUser } from "../../../util/file";
+import { TabProps } from "../../pages/Dashboard/types";
+import { encrypt } from "../../crypto/encrypt";
+import { fileCard } from "../../pages/Dashboard/DashboardTabs/DashboadTabs.style";
+import { getArrayBufferFromUser } from "../../util/file";
 import { set } from "statedrive";
 import { FakeWeakMap } from "@hydrophobefireman/j-utils";
 
@@ -37,10 +37,10 @@ export async function upload(
     return x;
   });
 }
-interface FileEntryProps {
+export interface FileEntryProps {
   data: FileData;
   password: string;
-  open(d: FileData): void;
+  open(d?: FileData): void;
 }
 export function FileEntry({ data, password, open }: FileEntryProps) {
   const fn = getFileName(data, password);
@@ -50,39 +50,64 @@ export function FileEntry({ data, password, open }: FileEntryProps) {
     </button>
   );
 }
+interface CacheKeys {
+  name?: string;
+  type?: string;
+  preview?: string;
+  title?: string;
+  ts?: string;
+}
 
-const wm = new FakeWeakMap<FileData, { name?: string; type?: string }>();
+const wm = new FakeWeakMap<FileData, CacheKeys>();
+
+export function evictWeakMapCache(f: FileData) {
+  return wm.delete(f);
+}
+
 export function getFileName(data: FileData, password: string): string {
+  return getDecryptedFileProp(data, password, "name");
+}
+
+export function getFileType(data: FileData, password: string): string {
+  return getDecryptedFileProp(
+    data,
+    password,
+    "type",
+    "application/octet-stream"
+  );
+}
+
+export function getDecryptedFileProp(
+  data: FileData,
+  password: string,
+  prop: keyof CacheKeys,
+  def?: any
+): string {
   const cache = wm.get(data) || {};
-  if (cache.name) {
-    return cache.name;
+  if (cache[prop]) {
+    return cache[prop];
   }
-  const meta = data.file_enc_meta;
-  const ret = meta ? dec(password)(JSON.parse(meta).name) : "";
-  cache.name = ret;
+  const ret = getDecryptedMetaObject(data, password, prop, def || "");
+  cache[prop] = ret;
   wm.set(data, cache);
   return ret;
 }
 
-export function getFileType(data: FileData, password: string): string {
-  const cache = wm.get(data) || {};
-  if (cache.type) {
-    return cache.name;
-  }
+function getDecryptedMetaObject(
+  data: FileData,
+  password: string,
+  field: keyof CacheKeys,
+  def?: string
+) {
   const meta = data.file_enc_meta;
-  const t = JSON.parse(meta).type;
-  const ret = t ? dec(password)(t) : "application/octet-stream";
-  cache.type = ret;
-  wm.set(data, cache);
-  return ret;
+  const t = JSON.parse(meta)[field];
+  return t ? dec(password)(t) : def || "";
 }
 export function deleteFile(f: FileData, fList: FileData[]) {
   const file_id = f.file_id;
   requests.postJSON(fileRoutes.delete, { file_id });
-  set(
-    files,
-    fList.filter((x) => x.file_id != f.file_id)
-  );
+  const xx = fList.filter((x) => x.file_id != f.file_id);
+  set(files, xx);
 }
 
 export function getFileList(setMessage?: TabProps["setMessage"]) {

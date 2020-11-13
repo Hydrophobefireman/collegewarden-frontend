@@ -148,6 +148,7 @@ function _getBinary(
   });
   return _prepareFetch<ArrayBuffer>(url, options, "arrayBuffer") as {
     result: Promise<ArrayBuffer | { error?: string }>;
+    controller: AbortController;
   };
 }
 function _postBinary<T>(

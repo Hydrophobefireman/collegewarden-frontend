@@ -19,4 +19,5 @@ export const fileRoutes = {
   upload: absoluteURL("/files/upload/"),
   getInfoDict: absoluteURL("/info/"),
   uploadInfoDict: absoluteURL("/info/upload"),
+  edit: (id: string) => absoluteURL(`/files/${id}/edit`),
 };

@@ -12,7 +12,7 @@ import {
   clean,
   SearchCollege,
   sanitizeCollegeData,
-  search,
+  searchItems,
 } from "./util";
 
 export function Search({ setMessage }: TabProps) {
@@ -35,7 +35,8 @@ export function Search({ setMessage }: TabProps) {
   }, []);
 
   useEffect(() => {
-    if (clean(value)) return $req(() => setResults(search(value, colleges)));
+    if (clean(value))
+      return $req(() => setResults(searchItems(value, colleges)));
     setResults([]);
   }, [value]);
 
