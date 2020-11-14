@@ -1,5 +1,5 @@
-import { CollegeData, colleges } from "../../../state";
-import { useSharedState } from "statedrive";
+import { CollegeData, colleges, didFetch } from "../../../state";
+import { useSharedState, set } from "statedrive";
 import { EditStage } from "../../../components/UniEdit/EditStage";
 import { useState } from "@hydrophobefireman/ui-lib";
 import { Stage0 } from "../../../components/UniEdit/Stage0";
@@ -15,6 +15,7 @@ export function AddUniversity({ name, close }: AddUniProps) {
   function next(collegeData?: CollegeData) {
     if (stage === 0) return setStage(1);
     const draft = data ? data.slice() : [];
+    // set(didFetch, false);
     draft.push(collegeData);
     setData(draft);
     close();

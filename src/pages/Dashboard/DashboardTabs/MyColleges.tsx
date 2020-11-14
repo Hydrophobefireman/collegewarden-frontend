@@ -23,6 +23,7 @@ function defaultSort(a: CollegeData, b: CollegeData): number {
   if (timelineB === "ED2") return 1;
 
   if (!a.applied && b.applied) return -1;
+  if (!b.applied && a.applied) return 1;
   const nameA = a.collegeName;
   const nameB = b.collegeName;
   return (

@@ -1,6 +1,12 @@
 import { redirect } from "@hydrophobefireman/ui-lib";
 import { get, set } from "statedrive";
-import { authData, UserDataResponse } from "../state";
+import {
+  authData,
+  colleges,
+  UserDataResponse,
+  files,
+  didFetch,
+} from "../state";
 import { userRoutes } from "./http/api_routes";
 import * as requests from "./http/requests";
 
@@ -29,6 +35,9 @@ const auth = {
   },
   logout() {
     set(authData, null);
+    set(colleges, null);
+    set(files, null);
+    set(didFetch, false);
     requests.updateTokens("", "");
     redirect("/login");
   },
