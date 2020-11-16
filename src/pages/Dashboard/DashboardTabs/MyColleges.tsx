@@ -66,8 +66,8 @@ export function MyColleges({ data: _data }: Props) {
           })}
         >
           colleges{" "}
-          <span class={css({ fontSize: "1.5rem" })}>({data.length})</span>
         </span>
+        <span class={css({ fontSize: "1.5rem" })}>({data.length})</span>
       </div>
       <div class={cardWrapper}>
         {data.map((x) => (
