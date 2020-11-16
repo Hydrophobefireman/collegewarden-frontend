@@ -35,8 +35,10 @@ function defaultSort(a: CollegeData, b: CollegeData): number {
 export function MyColleges({ data: _data }: Props) {
   const [college, setCollege] = useState<CollegeData>(null);
   const [cData, setCollegeData] = useSharedState(colleges);
+  const data = useMemo(() => (_data ? _data.slice().sort(defaultSort) : null), [
+    _data,
+  ]);
   if (!_data) return;
-  const data = useMemo(() => _data.slice().sort(defaultSort), [_data]);
 
   return (
     <section>
@@ -63,7 +65,8 @@ export function MyColleges({ data: _data }: Props) {
             textDecorationThickness: "2px",
           })}
         >
-          colleges
+          colleges{" "}
+          <span class={css({ fontSize: "1.5rem" })}>({data.length})</span>
         </span>
       </div>
       <div class={cardWrapper}>
