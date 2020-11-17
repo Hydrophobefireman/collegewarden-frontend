@@ -1,7 +1,8 @@
-import { css } from "catom";
+import { actionButton, center, mask } from "../../../styles";
+
 import { NotesIcon } from "../../../components/Icons/Notes";
 import { UploadIcon } from "../../../components/Icons/Upload";
-import { actionButton, center, mask } from "../../../styles";
+import { css } from "catom";
 import { upload } from "../../../components/FileInfo/FileUtil";
 
 const uploadButtonOverride = {
@@ -9,6 +10,7 @@ const uploadButtonOverride = {
   border: "2px solid var(--current-fg)",
   color: "var(--current-text-color)",
   padding: "0.5rem",
+  borderRadius: "50px",
 };
 
 export function UploadFiles({ onClick }: { onClick?(): void }) {
