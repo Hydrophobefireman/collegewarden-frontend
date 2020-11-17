@@ -6,7 +6,7 @@ export const dashboardLink = css({
   color: "var(--current-text-color)",
   border: "2px solid var(--current-fg)",
   padding: "10px",
-  borderRadius: "50px",
+  borderRadius: "10px",
   marginTop: ".8rem",
 });
 

@@ -3,31 +3,31 @@ import { FileData, files, passwordData } from "../../../state";
 import {
   FileEntry,
   deleteFile,
+  getDecryptedFileProp,
   getFileList,
   getFileName,
   getFileType,
   upload,
-  getDecryptedFileProp,
 } from "../../../components/FileInfo/FileUtil";
-import { cardWrapper } from "./DashboadTabs.style";
-import { useEffect, useRef, useState } from "@hydrophobefireman/ui-lib";
-
-import { openFileExternally, searchFiles, wrapUpload } from "./util";
-import { TabProps } from "../types";
-import { css } from "catom";
-import { useSharedStateValue } from "statedrive";
 import {
   FileTabLoader,
   NoFilesFound,
   UploadFiles,
   UploadNotes,
 } from "./FileTabActions";
-import { FileInfo } from "../../../components/FileInfo";
-import { NoteEditor } from "../../../components/NoteEditor";
-import { DeleteConfirmation } from "../../../components/DeleteConfirmation";
-import { Note } from "../../../components/FileInfo/Note";
-import { bold } from "../../../styles";
+import { openFileExternally, searchFiles, wrapUpload } from "./util";
+import { useEffect, useRef, useState } from "@hydrophobefireman/ui-lib";
+
 import { AnimatedInput } from "../../../components/AnimatedInput";
+import { DeleteConfirmation } from "../../../components/DeleteConfirmation";
+import { FileInfo } from "../../../components/FileInfo";
+import { Note } from "../../../components/FileInfo/Note";
+import { NoteEditor } from "../../../components/NoteEditor";
+import { TabProps } from "../types";
+import { bold } from "../../../styles";
+import { cardWrapper } from "./DashboadTabs.style";
+import { css } from "catom";
+import { useSharedStateValue } from "statedrive";
 
 export function Files({ setMessage }: TabProps): any {
   const password = useSharedStateValue(passwordData);
