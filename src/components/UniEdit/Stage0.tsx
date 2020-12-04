@@ -7,7 +7,7 @@ import { css } from "catom";
 
 export function Stage0({ data, close, next: next, glCollegeData }: StageProps) {
   const alreadyAdded =
-    !!data && data.some((x) => x.collegeName === glCollegeData.name);
+    !!data && data.some((x) => x.data.name === glCollegeData.name);
   const uniJSX = (
     <b class={[bold, css({ color: "var(--current-fg)" })]}>
       {glCollegeData.name}
