@@ -47,3 +47,16 @@ a {
 [disabled] {
   pointer-events: none;
 }
+
+textarea {
+  cursor: auto;
+  resize: none;
+}
+::-webkit-scrollbar {
+  width: 0.8rem;
+  cursor: pointer;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--current-alpha);
+  border-radius: 10px;
+}

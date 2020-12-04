@@ -1,33 +1,35 @@
-import { useState } from "@hydrophobefireman/ui-lib";
-import { css } from "catom";
-import { AnimatedInput } from "../AnimatedInput";
-import { Form } from "../Form";
 import { CollegeData, colleges } from "../../state";
 import { actionButton, bold, center } from "../../styles";
+import {
+  closeButton,
+  marginTop,
+  modalActionButton,
+  modalActionText,
+  modalCollegeName,
+  modalSection,
+} from "./UniEdit.styles";
+import { get, set } from "statedrive";
+
+import { AnimatedInput } from "../AnimatedInput";
 import { BooleanInfo } from "./BooleanProps";
 import { Deadline } from "./Deadline";
-import { TimeLine } from "./TimeLine";
-import { StageProps } from "./util";
-import { Notes } from "./Notes";
-import {
-  modalActionText,
-  marginTop,
-  modalCollegeName,
-  modalActionButton,
-  modalSection,
-  closeButton,
-} from "./UniEdit.styles";
-import { EditIcon } from "../Icons/Edit";
-import { ModalLayout } from "../Layout/ModalLayout";
 import { DeleteIcon } from "../Icons/Delete";
-import { get, set } from "statedrive";
+import { EditIcon } from "../Icons/Edit";
+import { Form } from "../Form";
+import { GlobalCollegeInfo } from "./GlobalCollegeInfo";
+import { ModalLayout } from "../Layout/ModalLayout";
+import { Notes } from "./Notes";
+import { StageProps } from "./util";
+import { TimeLine } from "./TimeLine";
+import { css } from "catom";
+import { useState } from "@hydrophobefireman/ui-lib";
 
 function boolOrDefault<T>(x: any, def: T) {
   return x == null ? def : x;
 }
 
 export function EditStage({
-  name,
+  glCollegeData,
   next,
   allowReadonlyMode,
   currentCollegeData,
@@ -51,7 +53,7 @@ export function EditStage({
   const [confirmDelete, setConfDelete] = useState(false);
   function handleFormSubmit() {
     const ret: CollegeData = {
-      collegeName: name,
+      data: glCollegeData,
       portalLink: portalURL,
       portalPassword: password,
       decisionTimeline: timeline,
@@ -63,6 +65,7 @@ export function EditStage({
     setSubmitted(true);
     next(ret);
   }
+
   const enabled = !allowReadonlyMode || editMode;
   if (confirmDelete) {
     const closeDialog = () => setConfDelete(false);
@@ -71,7 +74,9 @@ export function EditStage({
         <ModalLayout close={closeDialog}>
           <div>
             are you sure you want to remove{" "}
-            <b class={[bold, css({ color: "var(--current-fg)" })]}>{name}</b>{" "}
+            <b class={[bold, css({ color: "var(--current-fg)" })]}>
+              {glCollegeData.name}
+            </b>{" "}
             from your college lists?
           </div>
           <div class={css({ textAlign: "right" })}>
@@ -103,7 +108,7 @@ export function EditStage({
         ✖
       </button>
       <div>
-        <b class={modalCollegeName}>{name}</b>
+        <b class={modalCollegeName}>{glCollegeData.name}</b>
         <section class={modalSection}>
           <div>
             {allowReadonlyMode && (
@@ -129,6 +134,9 @@ export function EditStage({
               </>
             )}
           </div>
+
+          <GlobalCollegeInfo college={glCollegeData} />
+
           <Form>
             <div class={marginTop}>
               <AnimatedInput
@@ -171,7 +179,7 @@ export function EditStage({
             <Notes
               setNotes={setNotes}
               notes={notes}
-              name={name}
+              name={glCollegeData.name}
               disabled={!enabled}
             />
             <div class={center}>
@@ -198,6 +206,10 @@ export function EditStage({
 }
 
 function deleteCollege(c: CollegeData) {
-  const cData = get(colleges).filter((x) => x.collegeName !== c.collegeName);
+  const cData = get(colleges).filter((x) =>
+    "id" in c.data
+      ? x.data.id !== c.data.id
+      : x.data.name === (c.data as any).name
+  );
   set(colleges, cData);
 }

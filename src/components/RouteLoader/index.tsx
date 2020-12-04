@@ -1,13 +1,15 @@
 import {
-  Router,
-  Path,
   AsyncComponent,
   ComponentType,
+  Path,
+  Router,
+  useEffect,
 } from "@hydrophobefireman/ui-lib";
-import { Object_entries as entries } from "@hydrophobefireman/j-utils";
-import { NotFound } from "../../pages/404";
+
 import { ChunkLoading } from "../ChunkLoadingComponent";
+import { NotFound } from "../../pages/404";
 import { css } from "catom";
+import { Object_entries as entries } from "@hydrophobefireman/j-utils";
 
 const getDefault: <T>(mod: { default: T }) => T = (mod) => mod.default;
 
@@ -29,7 +31,6 @@ export function RouteLoader() {
       ))}
     </Router>
   );
-  
 }
 
 function RouteComponent({ match, render, params }) {

@@ -5,16 +5,16 @@ import {
   validatePassword,
   validateUsername,
 } from "../../util/validate";
-import { UserDataResponse, authData, passwordData } from "../../state";
 import { Router, redirect, useState } from "@hydrophobefireman/ui-lib";
+import { UserDataResponse, authData, passwordData } from "../../state";
+import { notify, set } from "statedrive";
 
 import { AnimatedInput } from "../../components/AnimatedInput";
 import { AuthForm } from "../../components/AuthForm";
-import { UserIcon } from "../../components/Icons/User";
 import { PassIcon } from "../../components/Icons/Pass";
+import { UserIcon } from "../../components/Icons/User";
 import { center } from "../../styles";
 import { css } from "catom";
-import { set } from "statedrive";
 import { userRoutes } from "../../util/http/api_routes";
 
 const inputCls = css({ marginTop: "1rem" });

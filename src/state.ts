@@ -1,3 +1,4 @@
+import { GlCollegeData } from "./pages/Dashboard/DashboardTabs/util";
 import { createState } from "statedrive";
 export interface UserData {
   name: string;
@@ -14,7 +15,6 @@ export interface FileDataResponse {
 }
 
 export interface CollegeData {
-  collegeName: string;
   decisionTimeline: "ED" | "EA" | "RD" | "ED2";
   decisionDate?: number;
   portalLink?: string;
@@ -22,11 +22,13 @@ export interface CollegeData {
   applied?: boolean;
   appliedWithFinAid?: boolean;
   notes?: string;
+  data: GlCollegeData;
 }
 
 export interface UserDataResponse {
   user_data: UserData;
 }
+
 export const authData = createState<UserData>({
   initialValue: { name: null, user: null, created_at: null },
 });

@@ -1,14 +1,17 @@
-import { useEffect, useRef } from "@hydrophobefireman/ui-lib";
-import { css } from "catom";
-
 import { actionButton, actionButtonWrapper, bold } from "../../styles";
+import { useEffect, useRef } from "@hydrophobefireman/ui-lib";
+
 import { ModalLayout } from "../Layout/ModalLayout";
 import { StageProps } from "./util";
+import { css } from "catom";
 
-export function Stage0({ data, close, next: next, name }: StageProps) {
-  const alreadyAdded = !!data && data.some((x) => x.collegeName === name);
+export function Stage0({ data, close, next: next, glCollegeData }: StageProps) {
+  const alreadyAdded =
+    !!data && data.some((x) => x.collegeName === glCollegeData.name);
   const uniJSX = (
-    <b class={[bold, css({ color: "var(--current-fg)" })]}>{name}</b>
+    <b class={[bold, css({ color: "var(--current-fg)" })]}>
+      {glCollegeData.name}
+    </b>
   );
   const ref = useRef<HTMLButtonElement>();
   useEffect(() => {

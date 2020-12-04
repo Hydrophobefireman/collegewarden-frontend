@@ -1,14 +1,16 @@
-import { redirect } from "@hydrophobefireman/ui-lib";
-import { get, set } from "statedrive";
+import * as requests from "./http/requests";
+
 import {
+  UserDataResponse,
   authData,
   colleges,
-  UserDataResponse,
-  files,
   didFetch,
+  files,
 } from "../state";
+import { get, set, subscribe } from "statedrive";
+
+import { redirect } from "@hydrophobefireman/ui-lib";
 import { userRoutes } from "./http/api_routes";
-import * as requests from "./http/requests";
 
 const auth = {
   isLoggedIn(): boolean {
@@ -34,12 +36,13 @@ const auth = {
     };
   },
   logout() {
+    requests.updateTokens("", "");
+    set(didFetch, true);
     set(authData, null);
     set(colleges, null);
     set(files, null);
-    set(didFetch, false);
-    requests.updateTokens("", "");
     redirect("/login");
   },
 };
+
 export { auth };

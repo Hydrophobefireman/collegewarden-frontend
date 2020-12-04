@@ -1,8 +1,10 @@
+import * as requests from "./util/http/requests";
+
 import { colleges, didFetch, passwordData } from "./state";
 import { get, set, subscribe } from "statedrive";
-import * as requests from "./util/http/requests";
-import { fileRoutes } from "./util/http/api_routes";
+
 import { encryptJson } from "./crypto/encrypt";
+import { fileRoutes } from "./util/http/api_routes";
 
 export function syncOnStateUpdates() {
   subscribe(colleges, async (oldData, newData) => {
@@ -10,7 +12,12 @@ export function syncOnStateUpdates() {
       set(didFetch, false);
       return;
     }
-    const data = await encryptJson(newData, get(passwordData));
+    const n = newData.map((x) => {
+      return { ...x, data: { id: x.data.id } as any };
+    });
+    console.log(n);
+    const data = await encryptJson(n, get(passwordData));
+
     requests.postBinary(fileRoutes.uploadInfoDict, data.encryptedBuf, {
       "x-cw-iv": data.meta,
       "x-cw-data-type": "encrypted_json",

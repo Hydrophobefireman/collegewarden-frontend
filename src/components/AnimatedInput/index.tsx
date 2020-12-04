@@ -15,7 +15,8 @@ import {
 interface InputProps
   extends Omit<JSX.HTMLAttributes<HTMLInputElement>, "onInput" | "icon"> {
   id?: string;
-  value?: string;
+  value: string;
+  onInput(value: string): void;
   wrapperClass?: string;
   labelText?: string;
   inputClass?: string | string[];
@@ -23,7 +24,6 @@ interface InputProps
   errorText?: string;
   ref?: RefType<HTMLInputElement>;
   icon?: ComponentChild;
-  onInput(value: string): void;
 }
 
 export function AnimatedInput(props: InputProps): VNode {

@@ -29,9 +29,9 @@ export function CollegeCard({ data, setCollege }: CollegeCardProps) {
         ]}
       >
         <span class={nameLogoWrap}>
-          <NameLogo text={data.collegeName} size="3rem" />
+          <NameLogo text={data.data.name} size="3rem" />
         </span>
-        <div class={collegeName}>{data.collegeName}</div>
+        <div class={collegeName}>{data.data.name}</div>
       </div>
       <div class={infoWrap}>
         <Info

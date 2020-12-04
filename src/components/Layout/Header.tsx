@@ -1,14 +1,21 @@
+import Component, { useEffect } from "@hydrophobefireman/ui-lib";
+import { UserData, authData } from "../../state";
 import { bold, hoverable } from "../../styles";
+import {
+  subscribe,
+  unsubscribe,
+  useSetSharedState,
+  useSharedStateValue,
+} from "statedrive";
 
 import { LogoutIcon } from "../Icons/Logout";
 import { auth } from "../../util/auth";
-import { authData } from "../../state";
 import { css } from "catom";
 import { logoutCss } from "./Layout.styles";
-import { useSharedStateValue } from "statedrive";
 
 export function Header() {
   const data = useSharedStateValue(authData);
+
   return (
     <header
       class={css({

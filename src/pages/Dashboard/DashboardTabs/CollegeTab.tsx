@@ -1,12 +1,11 @@
 import { A } from "@hydrophobefireman/ui-lib";
-
 import { MyColleges } from "./MyColleges";
 import { SadIcon } from "../../../components/Icons/Sad";
 import { TabProps } from "../types";
 import { center } from "../../../styles";
 
 export function CollegeTab({ collegeData }: TabProps): any {
-  if (collegeData && !collegeData.length) return <NoCollegeAdded />;
+  if (!collegeData || !collegeData.length) return <NoCollegeAdded />;
   return <MyColleges data={collegeData} />;
 }
 

@@ -5,7 +5,7 @@ export const MIN_LENGTH = 4;
 
 export const sanitizeRegExp = /([^\w])/g;
 export const clean = (x: string): string =>
-  (x + "").replace(sanitizeRegExp, "");
+  (x + "").replace(sanitizeRegExp, "").toLowerCase();
 function validateRequiredString(
   name: string,
   dontStripWhitespace?: boolean
@@ -20,7 +20,8 @@ function validateUsername(username: string): ValidationResponse {
     return [false, "Username cannot be blank"];
   if (username.length > MAX_LENGTH) return [false, `Username too long`];
   if (username.length < MIN_LENGTH) return [false, "Username too short"];
-  if (clean(username) !== username) return [false, "Invalid username"];
+  if (clean(username) !== username.toLowerCase())
+    return [false, "Invalid username"];
 
   return [true];
 }

@@ -1,5 +1,5 @@
-import { useRef } from "@hydrophobefireman/ui-lib";
 import { inlineContainer } from "./UniEdit.styles";
+import { useRef } from "@hydrophobefireman/ui-lib";
 
 export function Deadline({
   setDeadline,
@@ -19,7 +19,7 @@ export function Deadline({
 
   return (
     <div class={inlineContainer}>
-      <div>decision deadline</div>
+      <div>Results</div>
       <input
         disabled={disabled}
         ref={input}

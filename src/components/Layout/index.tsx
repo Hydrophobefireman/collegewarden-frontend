@@ -1,13 +1,15 @@
-import { AsyncComponent } from "@hydrophobefireman/ui-lib";
-import { set } from "statedrive";
-import { authData, UserDataResponse } from "../../state";
-import { userRoutes } from "../../util/http/api_routes";
-import { RouteLoader } from "../RouteLoader";
 import * as requests from "../../util/http/requests";
-import { center } from "../../styles";
+
+import { UserDataResponse, authData } from "../../state";
+
+import { AsyncComponent } from "@hydrophobefireman/ui-lib";
 import { ChunkLoading } from "../ChunkLoadingComponent";
-import { ThemeSwitcher } from "../ThemeSwitcher";
 import { Header } from "./Header";
+import { RouteLoader } from "../RouteLoader";
+import { ThemeSwitcher } from "../ThemeSwitcher";
+import { center } from "../../styles";
+import { set } from "statedrive";
+import { userRoutes } from "../../util/http/api_routes";
 
 function Layout() {
   return (

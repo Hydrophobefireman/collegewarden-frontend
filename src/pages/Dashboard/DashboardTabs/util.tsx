@@ -1,46 +1,46 @@
-import { RefType } from "@hydrophobefireman/ui-lib";
+import * as requests from "../../../util/http/requests";
+
 import {
   getDecryptedFileProp,
   getFileName,
   getFileType,
 } from "../../../components/FileInfo/FileUtil";
-import { decrypt } from "../../../crypto/decrypt";
-import { FileData } from "../../../state";
-import { fileRoutes } from "../../../util/http/api_routes";
-import * as requests from "../../../util/http/requests";
-import { clean as _clean } from "../../../util/validate/validators";
 
-export const clean = (x: string) => _clean(x).toLowerCase();
+import { FileData } from "../../../state";
+import { RefType } from "@hydrophobefireman/ui-lib";
+import { clean } from "../../../util/validate/validators";
+import { decrypt } from "../../../crypto/decrypt";
+import { fileRoutes } from "../../../util/http/api_routes";
+
+export { clean } from "../../../util/validate/validators";
+
 export const $req = window.requestAnimationFrame
   ? (cb: FrameRequestCallback) => window.requestAnimationFrame(cb)
   : setTimeout;
 
-export interface SearchCollege {
+export interface GlCollegeData {
+  id: number;
   name: string;
-  alias?: string[];
-  search?: string;
-}
-
-export function sanitizeCollegeData(data: SearchCollege[]) {
-  return data.map(({ name, alias }) => ({
-    name,
-    search: clean(name),
-    alias: alias && alias.map(clean),
-  }));
+  city: string;
+  state: string;
+  springDeadline: string | null;
+  fallDeadline: string | null;
+  summerDeadline: string | null;
+  deadlineRDRolling: string | null;
+  hasFeeIntl: boolean;
+  hasFeeUS: boolean;
+  type: "Coed" | "Women" | "Men";
+  caEssayReqd: boolean;
+  hasSupl: boolean;
+  url: string;
+  $search: string[];
 }
 
 const LIMIT = 100;
-export function searchItems(needle: string, haystack: SearchCollege[]) {
+export function searchItems(needle: string, haystack: GlCollegeData[]) {
   const cleaned = clean(needle);
   return haystack
-    .filter((next) => {
-      if (
-        next.search.includes(cleaned) ||
-        (next.alias && next.alias.some((x) => x.includes(cleaned)))
-      ) {
-        return true;
-      }
-    })
+    .filter((next) => next.$search.some((x) => x.includes(cleaned)))
     .slice(0, LIMIT);
 }
 interface SetMessage {

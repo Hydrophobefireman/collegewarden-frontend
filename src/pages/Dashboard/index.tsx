@@ -1,31 +1,34 @@
-import {
-  redirect,
-  Router,
-  useEffect,
-  useState,
-} from "@hydrophobefireman/ui-lib";
-import { SnackBar } from "../../components/SnackBar";
-import { useLocation, useRequiredAuthentication } from "../../customHooks";
-import { center, mask } from "../../styles";
-import { CollegeTab } from "./DashboardTabs/CollegeTab";
-import { dashboardDataSection } from "./Dashboard.styles";
-import { DashboardNav } from "./DashboardNav";
-import { Files } from "./DashboardTabs/FilesTab";
-import { Search } from "./DashboardTabs/SearchTab";
-import { get, set, useSharedState } from "statedrive";
+import * as requests from "../../util/http/requests";
+
 import {
   CollegeData,
+  FileData,
   colleges,
   didFetch,
-  FileData,
   files,
   passwordData,
 } from "../../state";
+import {
+  Router,
+  redirect,
+  useEffect,
+  useState,
+} from "@hydrophobefireman/ui-lib";
+import { center, mask } from "../../styles";
+import { get, set, useSharedState } from "statedrive";
+import { useLocation, useRequiredAuthentication } from "../../customHooks";
+
+import { CollegeTab } from "./DashboardTabs/CollegeTab";
+import { DashboardNav } from "./DashboardNav";
+import { Files } from "./DashboardTabs/FilesTab";
 import { PasswordInput } from "../../components/PasswordInput";
-import * as requests from "../../util/http/requests";
-import { fileRoutes } from "../../util/http/api_routes";
+import { Search } from "./DashboardTabs/SearchTab";
+import { SnackBar } from "../../components/SnackBar";
+import { dashboardDataSection } from "./Dashboard.styles";
 import { decryptJson } from "../../crypto/decrypt";
 import { evictWeakMapCache } from "../../components/FileInfo/FileUtil";
+import { fileRoutes } from "../../util/http/api_routes";
+import { validateCollegeDataWithNewApi } from "./_api2";
 
 interface DashboardProps {
   params: { [k: string]: string };
@@ -94,6 +97,7 @@ export default function Dashboard(props: DashboardProps) {
         { encryptedBuf: res, meta: file_enc_meta },
         pass
       );
+
       if (resp.error) {
         setPass("");
         const prevFiles = get(files);
@@ -104,7 +108,7 @@ export default function Dashboard(props: DashboardProps) {
           // objects individually (since it's a weakmap, we don't really face a memory leak)
           // or we could just evict them ourselves
           // which is better than cloning multiple objects again and again
-          prevFiles.forEach((x) => evictWeakMapCache(x));
+          prevFiles.forEach(evictWeakMapCache);
         }
         return setMessage({
           message: resp.error || "could not decrypt",
@@ -112,7 +116,7 @@ export default function Dashboard(props: DashboardProps) {
         });
       }
       set(didFetch, true);
-      return setCData(resp);
+      return setCData(await validateCollegeDataWithNewApi(resp));
     })();
   }, [downloadRes, pass]);
 

@@ -1,12 +1,14 @@
+import { $req, clean } from "./util";
 import { CollegeData, colleges } from "../../../state";
+import { useEffect, useMemo, useState } from "@hydrophobefireman/ui-lib";
 
+import { AnimatedInput } from "../../../components/AnimatedInput";
 import { CollegeCard } from "./CollegeCard";
 import { EditStage } from "../../../components/UniEdit/EditStage";
+import { cardWrapper } from "./DashboadTabs.style";
 import { css } from "catom";
 import { heading } from "../../../styles";
 import { useSharedState } from "statedrive";
-import { useMemo, useState } from "@hydrophobefireman/ui-lib";
-import { cardWrapper } from "./DashboadTabs.style";
 
 interface Props {
   data: CollegeData[];
@@ -24,8 +26,8 @@ function defaultSort(a: CollegeData, b: CollegeData): number {
 
   if (!a.applied && b.applied) return -1;
   if (!b.applied && a.applied) return 1;
-  const nameA = a.collegeName;
-  const nameB = b.collegeName;
+  const nameA = a.data.name;
+  const nameB = b.data.name;
   return (
     a.decisionDate - b.decisionDate ||
     (nameA > nameB ? 1 : nameB > nameA ? -1 : 0)
@@ -35,10 +37,36 @@ function defaultSort(a: CollegeData, b: CollegeData): number {
 export function MyColleges({ data: _data }: Props) {
   const [college, setCollege] = useState<CollegeData>(null);
   const [cData, setCollegeData] = useSharedState(colleges);
-  const data = useMemo(() => (_data ? _data.slice().sort(defaultSort) : null), [
-    _data,
-  ]);
-  if (!_data) return;
+  const [filtered, setFiltered] = useState(_data);
+
+  const [search, setSearch] = useState("");
+  const data = useMemo(
+    () => (filtered ? filtered.slice().sort(defaultSort) : null),
+    [filtered]
+  );
+  useEffect(() => {
+    setFiltered(_data);
+  }, [_data]);
+
+  function onInput(value: string) {
+    setSearch(value);
+    $filter(value);
+  }
+
+  function $filter(value: string) {
+    $req(() => {
+      if (!value || !_data) return setFiltered(_data || []);
+      const cleaned = clean(value);
+      setFiltered(
+        _data.filter((x) =>
+          x.data.$search
+            ? x.data.$search.some((a) => a.includes(cleaned))
+            : clean(x.data.name).includes(cleaned)
+        )
+      );
+    });
+  }
+  if (!data) return;
 
   return (
     <section>
@@ -46,10 +74,10 @@ export function MyColleges({ data: _data }: Props) {
         <EditStage
           close={() => setCollege(null)}
           currentCollegeData={college}
-          name={college.collegeName}
+          glCollegeData={college.data}
           next={(d: CollegeData) => {
             const draft = cData.map((x) =>
-              x.collegeName === college.collegeName ? d : x
+              x.data.name === college.data.name ? d : x
             );
             setCollegeData(draft);
             setCollege(null);
@@ -69,11 +97,18 @@ export function MyColleges({ data: _data }: Props) {
         </span>
         <span class={css({ fontSize: "1.5rem" })}>({data.length})</span>
       </div>
-      <div class={cardWrapper}>
-        {data.map((x) => (
-          <CollegeCard data={x} setCollege={setCollege} />
-        ))}
-      </div>
+      <section>
+        <AnimatedInput
+          value={search}
+          onInput={onInput}
+          labelText="Search college"
+        />
+        <div class={cardWrapper}>
+          {data.map((x) => (
+            <CollegeCard data={x} setCollege={setCollege} />
+          ))}
+        </div>
+      </section>
     </section>
   );
 }
