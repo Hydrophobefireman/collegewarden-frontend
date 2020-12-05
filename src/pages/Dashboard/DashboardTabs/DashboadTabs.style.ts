@@ -54,7 +54,10 @@ export const infoWrap = css({
   marginTop: "1rem",
 });
 
-export const collegeName = css({ marginLeft: "0.5rem" });
+export const collegeName = css({
+  marginLeft: "0.5rem",
+  wordBreak: "break-word",
+});
 
 export const nameLogoWrap = css({
   display: "inline-block",
@@ -70,12 +73,12 @@ export const uniName = css({
 });
 
 export const uniCard = css({
+  width: "250px",
   maxWidth: "250px",
   padding: "2rem",
   borderRadius: "10px",
   margin: "1rem",
   boxShadow: "var(--box-shadow)",
-
   transition: "0.3s linear",
   display: "flex",
   flexDirection: "column",

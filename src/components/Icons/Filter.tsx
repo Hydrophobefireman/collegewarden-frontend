@@ -1,6 +1,6 @@
 import { _icon } from "./_icon";
 
-export const Filter = _icon(
+export const FilterIcon = _icon(
   "0 0 24 24",
   <path
     stroke-linecap="round"

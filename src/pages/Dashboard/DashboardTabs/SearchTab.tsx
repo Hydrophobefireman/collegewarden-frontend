@@ -1,17 +1,32 @@
 import { $req, GlCollegeData, clean, searchItems } from "./util";
 import { actionButton, bold, center } from "../../../styles";
+import {
+  filterButton,
+  filterOption,
+  filterRow,
+  filtersUsed,
+  inputWrapper,
+  manualAddCollegeButton,
+  manualCollegeAddContainer,
+  searchFilterWrap,
+  tabContainer,
+} from "./SearchTab.styles";
 import { useEffect, useState } from "@hydrophobefireman/ui-lib";
 
+import { AddCollegeIcon } from "../../../components/Icons/AddCollege";
 import { AddUniversity } from "./AddUniversity";
 import { AnimatedInput } from "../../../components/AnimatedInput";
 import { ChunkLoading } from "../../../components/ChunkLoadingComponent";
-import { Filter } from "../../../components/Icons/Filter";
+import { FilterIcon } from "../../../components/Icons/Filter";
 import { ModalLayout } from "../../../components/Layout/ModalLayout";
+import { Object_entries } from "@hydrophobefireman/j-utils";
 import { SearchResults } from "./SearchResults";
 import { TabProps } from "../types";
 import { css } from "catom";
 import { prop2text } from "../../../util/prop2text";
 import { searchResultBox } from "./DashboadTabs.style";
+import { Form } from "src/components/Form";
+import { CustomCollege } from "./CustomCollege";
 
 export function Search({ setMessage }: TabProps) {
   const [colleges, setColleges] = useState<GlCollegeData[]>(null);
@@ -21,6 +36,7 @@ export function Search({ setMessage }: TabProps) {
   const [editFilter, setEditFilters] = useState(false);
   const [add, setAdd] = useState<GlCollegeData>(null);
   const [filters, setFilters] = useState(null);
+  const [isAddingManual, setManual] = useState(false);
   useEffect(() => {
     setLoading(true);
     import("../../../data/data.json")
@@ -50,12 +66,13 @@ export function Search({ setMessage }: TabProps) {
     const prop = c.dataset.prop;
     const value = c.dataset.value === "true";
     const f = filters || {};
+    const setF = (f: any) => $req(() => setFilters(f));
     if ((f[prop] && value) || (prop in f && !f[prop] && !value)) {
       delete f[prop];
-      return setFilters({ ...f });
+      return setF({ ...f });
     }
     f[prop] = value;
-    setFilters({ ...f });
+    setF({ ...f });
   }
   const isReady = !loading && !!colleges;
   if (!isReady)
@@ -66,11 +83,12 @@ export function Search({ setMessage }: TabProps) {
       </div>
     );
   return (
-    <div class={css({ marginTop: "2rem" })}>
+    <div class={tabContainer}>
+      {isAddingManual && <CustomCollege close={() => setManual(false)} />}
       {editFilter && (
         <ModalLayout close={() => setEditFilters(false)}>
           {["caEssayReqd", "hasSupl", "hasFeeUS", "hasFeeIntl"].map((x) => (
-            <div class={css({ marginTop: "5px" })}>
+            <div class={filterRow}>
               <div class={bold}>{prop2text[x]}?</div>
               <div>
                 <button
@@ -105,23 +123,20 @@ export function Search({ setMessage }: TabProps) {
         </ModalLayout>
       )}
       {add && <AddUniversity college={add} close={() => setAdd(null)} />}
-      <div class={css({ display: "flex", alignItems: "flex-end" })}>
+      <div class={searchFilterWrap}>
         <AnimatedInput
           labelText="Search Colleges"
           onInput={setValue}
           value={value}
-          wrapperClass={css({ flex: 1 })}
+          wrapperClass={inputWrapper}
         />
-        <button
-          onClick={() => setEditFilters(true)}
-          class={css({
-            background: "none",
-            border: "none",
-            display: "inline-flex",
-            cursor: "pointer",
-          })}
-        >
-          <Filter />
+        <button onClick={() => setEditFilters(true)} class={filterButton}>
+          <FilterIcon />
+        </button>
+      </div>
+      <div class={manualCollegeAddContainer}>
+        <button class={manualAddCollegeButton} onClick={() => setManual(true)}>
+          <AddCollegeIcon /> Add college manually
         </button>
       </div>
       {results && results.length > 0 && (
@@ -130,6 +145,19 @@ export function Search({ setMessage }: TabProps) {
             Found <b>{results.length}</b>{" "}
             {results.length === 1 ? "college" : "colleges"}
           </div>
+          {filters && Object.keys(filters).length > 0 && (
+            <div>
+              <span class={filtersUsed}>Filters used</span>
+              <div>
+                {Object_entries(filters).map(([k, v]) => (
+                  <div>
+                    {prop2text[k]}?{" "}
+                    <span class={filterOption}>{v ? "yes" : "no"}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
           <section class={searchResultBox}>
             <SearchResults
               results={results}

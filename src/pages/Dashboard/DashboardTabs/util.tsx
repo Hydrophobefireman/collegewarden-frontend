@@ -34,6 +34,7 @@ export interface GlCollegeData {
   hasSupl: boolean;
   url: string;
   $search: string[];
+  __internal?: any;
 }
 
 const LIMIT = 100;

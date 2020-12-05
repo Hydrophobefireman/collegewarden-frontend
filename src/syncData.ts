@@ -13,9 +13,11 @@ export function syncOnStateUpdates() {
       return;
     }
     const n = newData.map((x) => {
-      return { ...x, data: { id: x.data.id } as any };
+      return {
+        ...x,
+        data: { id: x.data.id, __internal: x.data.__internal } as any,
+      };
     });
-    console.log(n);
     const data = await encryptJson(n, get(passwordData));
 
     requests.postBinary(fileRoutes.uploadInfoDict, data.encryptedBuf, {

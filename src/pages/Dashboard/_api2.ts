@@ -15,6 +15,10 @@ export function validateCollegeDataWithNewApi(colleges: CollegeData[]) {
           const data = college.data;
           if (data && data.id && data.name) return college;
           if (data.id) {
+            if (data.__internal) {
+              college.data = data.__internal;
+              return college;
+            }
             college.data = normalized[data.id];
             return college;
           }
