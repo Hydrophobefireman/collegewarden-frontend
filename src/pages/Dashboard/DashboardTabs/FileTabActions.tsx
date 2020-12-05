@@ -56,15 +56,21 @@ export function UploadNotes({ onClick }: { onClick?(): void }) {
 }
 interface NoFilesFoundProps {
   wrapUpload(p: Promise<{ error?: string; name?: string }[]>): void;
+  setNotes(a: boolean): void;
   password: string;
 }
-export function NoFilesFound({ wrapUpload, password }: NoFilesFoundProps) {
+export function NoFilesFound({
+  wrapUpload,
+  setNotes,
+  password,
+}: NoFilesFoundProps) {
   return (
     <div class={center}>
       <div>no files found</div>
       <div class={css({ marginTop: "3rem" })}>
         <div>
           <UploadFiles onClick={() => wrapUpload(upload(password))} />
+          <UploadNotes onClick={() => setNotes(true)} />
         </div>
       </div>
     </div>

@@ -109,6 +109,7 @@ export function Files({ setMessage }: TabProps): any {
       <NoFilesFound
         password={password}
         wrapUpload={(u) => wrapUpload(u, setMessage)}
+        setNotes={setNotes}
       />
     );
   }
