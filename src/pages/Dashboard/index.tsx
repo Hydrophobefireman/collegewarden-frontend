@@ -39,7 +39,7 @@ interface UserAlert {
 }
 export default function Dashboard(props: DashboardProps) {
   const location = useLocation();
-  useRequiredAuthentication("/dashboard");
+  const isLoggedIn = useRequiredAuthentication("/dashboard");
   const [message, setMessage] = useState<UserAlert>({
     message: "",
     isError: false,
@@ -48,11 +48,11 @@ export default function Dashboard(props: DashboardProps) {
   const tab = props.params.tab || "colleges";
   useEffect(() => {
     const expectedPath = `/dashboard/${tab}`;
-    if (Router.path !== expectedPath) {
+    if (Router.path !== expectedPath && isLoggedIn) {
       console.log("redirecting");
       redirect(expectedPath);
     }
-  }, [tab]);
+  }, [tab, isLoggedIn]);
 
   const [collegeData, setCData] = useSharedState(colleges);
   const [loading, setLoading] = useState(false);

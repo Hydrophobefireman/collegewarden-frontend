@@ -1,15 +1,15 @@
 import {
-  useState,
   Router,
-  useEffect,
   RouterSubscription,
-  useRef,
   redirect,
+  useEffect,
+  useRef,
+  useState,
 } from "@hydrophobefireman/ui-lib";
-import { useSharedStateValue } from "statedrive";
-import { authData } from "./state";
 
 import { auth } from "./util/auth";
+import { authData } from "./state";
+import { useSharedStateValue } from "statedrive";
 
 function useMount(fn: () => unknown | (() => void)) {
   return useEffect(fn, []);
@@ -55,9 +55,13 @@ export function useInterval(callback: CB, delay?: number) {
   }, [delay]);
 }
 
-export function useRequiredAuthentication(path: string): void {
+export function useRequiredAuthentication(path: string): boolean {
   const data = useSharedStateValue(authData);
+  const isLoggedIn = !!(data && data.user);
   useEffect(() => {
-    if (!(data && data.user)) return redirect(`/login?next=${path}`);
-  }, [data && data.user]);
+    if (!isLoggedIn) {
+      return redirect(`/login?next=${path}`);
+    }
+  }, [isLoggedIn]);
+  return isLoggedIn;
 }
