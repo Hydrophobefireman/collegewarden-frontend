@@ -65,7 +65,6 @@ export default function Dashboard(props: DashboardProps) {
     );
     (async () => {
       const { data, error } = await result;
-      setLoading(false);
       if (error) {
         setLoading(false);
         return setMessage({ message: error, isError: true });
@@ -73,17 +72,16 @@ export default function Dashboard(props: DashboardProps) {
       const infoDict = data.info_dict;
       if (!infoDict) {
         setLoading(false);
-
         return;
       }
       const { file_id, file_enc_meta } = infoDict;
       const downloadResult = await requests.getBinary(
         fileRoutes.download(file_id)
       ).result;
-      setLoading(false);
       if (downloadResult instanceof ArrayBuffer) {
         return setDownloadRes({ res: downloadResult, file_enc_meta });
       }
+      setLoading(false);
       return setMessage({ message: downloadResult.error, isError: true });
     })();
     return () => controller.abort();
@@ -99,6 +97,7 @@ export default function Dashboard(props: DashboardProps) {
       );
 
       if (resp.error) {
+        setLoading(false);
         setPass("");
         const prevFiles = get(files);
         if (prevFiles && prevFiles.length) {
@@ -116,7 +115,9 @@ export default function Dashboard(props: DashboardProps) {
         });
       }
       set(didFetch, true);
-      return setCData(await validateCollegeDataWithNewApi(resp));
+      const validated = await validateCollegeDataWithNewApi(resp);
+      setLoading(false);
+      return setCData(validated);
     })();
   }, [downloadRes, pass]);
 
