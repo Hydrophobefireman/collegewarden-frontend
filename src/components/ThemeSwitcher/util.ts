@@ -4,7 +4,9 @@ import { getVariableValue } from "../../util/cssVar";
 function getThemeCount() {
   const style = getComputedStyle(document.documentElement);
   let count = 0;
-  while (style.getPropertyValue(`--theme-${count++}-bg`)) {}
+  while (style.getPropertyValue(`--theme-${count}-bg`)) {
+    count++;
+  }
   return count;
 }
 

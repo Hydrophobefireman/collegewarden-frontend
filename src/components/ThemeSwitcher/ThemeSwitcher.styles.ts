@@ -15,5 +15,5 @@ export const themeButtonCss = css({
   borderRadius: "50%",
   background: "transparent",
   zIndex: 6,
-  boxShadow: "var(--box-shadow)",
+  padding: "0",
 });

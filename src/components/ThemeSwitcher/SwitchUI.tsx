@@ -33,7 +33,7 @@ export function SwitchUI({ setTheme, enabled }: SwitchUIProps) {
           class={[
             css({
               display: "inline-flex",
-              margin: "1.2rem",
+              margin: "1rem",
               media: { "(min-width:500px)": { marginBottom: "0px" } },
             }),
             hoverable,
@@ -46,8 +46,7 @@ export function SwitchUI({ setTheme, enabled }: SwitchUIProps) {
             aria-label={"Switch to theme " + i}
           >
             <SwitchButtons
-              size={1.75}
-              units="rem"
+              size="1.75rem"
               bgColor={`var(--theme-${i}-bg)`}
               fgColor={`var(--theme-${i}-fg)`}
             />

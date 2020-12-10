@@ -51,8 +51,7 @@ export function ThemeSwitcher({
           ]}
         >
           <SwitchButtons
-            size={size}
-            units={units}
+            size={size + units}
             bgColor="var(--current-bg)"
             fgColor="var(--current-fg)"
           />
