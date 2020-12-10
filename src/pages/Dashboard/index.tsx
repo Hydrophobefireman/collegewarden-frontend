@@ -115,7 +115,9 @@ export default function Dashboard(props: DashboardProps) {
         });
       }
       set(didFetch, true);
+
       const validated = await validateCollegeDataWithNewApi(resp);
+
       setLoading(false);
       return setCData(validated);
     })();

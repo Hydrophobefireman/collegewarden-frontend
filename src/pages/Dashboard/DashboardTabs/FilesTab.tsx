@@ -100,17 +100,29 @@ export function Files({ setMessage }: TabProps): any {
         }}
       />
     );
+  const notesEl = notes && (
+    <NoteEditor
+      close={() => setNotes(null)}
+      list={filteredUnsortedFilesAndNotes}
+      data={typeof notes === "boolean" ? null : notes}
+      password={password}
+      setMessage={setMessage}
+    />
+  );
   if (sortedFileList == null && loading && password) return <FileTabLoader />;
   if (
     unFilteredUnsortedfilesAndNotes &&
     unFilteredUnsortedfilesAndNotes.length == 0
   ) {
     return (
-      <NoFilesFound
-        password={password}
-        wrapUpload={(u) => wrapUpload(u, setMessage)}
-        setNotes={setNotes}
-      />
+      <>
+        <NoFilesFound
+          password={password}
+          wrapUpload={(u) => wrapUpload(u, setMessage)}
+          setNotes={setNotes}
+        />
+        {notesEl}
+      </>
     );
   }
   if (password) {
@@ -123,15 +135,7 @@ export function Files({ setMessage }: TabProps): any {
             onInput={setSearch}
           />
         </div>
-        {notes && (
-          <NoteEditor
-            close={() => setNotes(null)}
-            list={filteredUnsortedFilesAndNotes}
-            data={typeof notes === "boolean" ? null : notes}
-            password={password}
-            setMessage={setMessage}
-          />
-        )}
+        {notesEl}
         {openFile && (
           <FileInfo
             downloadingState={downloadingState}

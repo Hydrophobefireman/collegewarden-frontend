@@ -15,9 +15,13 @@ export function syncOnStateUpdates() {
     const n = newData.map((x) => {
       return {
         ...x,
-        data: { id: x.data.id, __internal: x.data.__internal } as any,
+        data: {
+          id: x.data.id,
+          __internal: { id: x.data.id, name: x.data.name },
+        } as any,
       };
     });
+
     const data = await encryptJson(n, get(passwordData));
 
     requests.postBinary(fileRoutes.uploadInfoDict, data.encryptedBuf, {

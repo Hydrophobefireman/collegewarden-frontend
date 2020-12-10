@@ -62,6 +62,7 @@ export function EditStage({
       appliedWithFinAid: finAid,
       notes,
     };
+
     setSubmitted(true);
     next(ret);
   }
