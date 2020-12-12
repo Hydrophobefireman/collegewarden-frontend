@@ -33,7 +33,7 @@ export default function Login() {
       validateUsername(user, setMessage) ||
       validatePassword(password, setMessage)
     ) {
-      return;
+      return Promise.resolve();
     }
     return requests
       .postJSON<UserDataResponse>(userRoutes.login, { user, password })

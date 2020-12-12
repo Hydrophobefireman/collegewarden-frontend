@@ -36,7 +36,7 @@ export default function Register() {
       validateUsername(user, setMessage) ||
       validatePassword(password, setMessage)
     ) {
-      return;
+      return Promise.resolve();
     }
     return requests
       .postJSON<UserDataResponse>(userRoutes.register, { user, name, password })
