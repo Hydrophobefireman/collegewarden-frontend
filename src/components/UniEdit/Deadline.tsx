@@ -3,11 +3,9 @@ import { useRef } from "@hydrophobefireman/ui-lib";
 
 export function Deadline({
   setDeadline,
-  disabled,
   deadline,
 }: {
   setDeadline(n: number): void;
-  disabled: boolean;
   deadline: number;
 }) {
   const input = useRef<HTMLInputElement>();
@@ -21,7 +19,6 @@ export function Deadline({
     <div class={inlineContainer}>
       <div>Results</div>
       <input
-        disabled={disabled}
         ref={input}
         min={dateTimeLocalCompat(new Date())}
         type="datetime-local"

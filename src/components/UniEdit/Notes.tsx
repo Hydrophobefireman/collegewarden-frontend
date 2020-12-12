@@ -4,15 +4,13 @@ interface NotesProps {
   name: string;
   setNotes(notes: string): void;
   notes: string;
-  disabled: boolean;
 }
-export function Notes({ setNotes, name, notes, disabled }: NotesProps) {
+export function Notes({ setNotes, name, notes }: NotesProps) {
   return (
     <div class={inlineContainer}>
       <div>notes</div>
       <div>
         <textarea
-          disabled={disabled}
           class={notesArea}
           value={notes}
           onInput={(e) => {

@@ -1,3 +1,4 @@
+import { bold } from "../../../styles";
 import { css } from "catom";
 
 export const searchResultBox = css({
@@ -124,3 +125,19 @@ export const actionButtonOverride = {
   border: "2px solid var(--current-fg)",
   borderRadius: "10px",
 };
+
+export const clgHeading = [
+  bold,
+  css({
+    marginTop: "10px",
+    fontSize: "2rem",
+    marginLeft: "1rem",
+    textDecoration: "underline",
+  }),
+];
+
+export const acceptedCss = `${clgHeading} ${css({ color: "#00e400" })}`;
+
+export const appliedCss = `${clgHeading} ${css({
+  color: "var(--current-fg)",
+})}`;

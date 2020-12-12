@@ -1,11 +1,16 @@
 import { $req, clean } from "./util";
 import { CollegeData, colleges } from "../../../state";
+import {
+  acceptedCss,
+  appliedCss,
+  cardWrapper,
+  clgHeading,
+} from "./DashboadTabs.style";
 import { useEffect, useMemo, useState } from "@hydrophobefireman/ui-lib";
 
 import { AnimatedInput } from "../../../components/AnimatedInput";
 import { CollegeCard } from "./CollegeCard";
 import { EditStage } from "../../../components/UniEdit/EditStage";
-import { cardWrapper } from "./DashboadTabs.style";
 import { css } from "catom";
 import { heading } from "../../../styles";
 import { useSharedState } from "statedrive";
@@ -23,9 +28,9 @@ function defaultSort(a: CollegeData, b: CollegeData): number {
     return -1;
   }
   if (timelineB === "ED2") return 1;
+  if (timelineA === "EA" && timelineB !== "EA") return -1;
+  if (timelineA !== "EA" && timelineB === "EA") return 1;
 
-  if (!a.applied && b.applied) return -1;
-  if (!b.applied && a.applied) return 1;
   const nameA = a.data.name;
   const nameB = b.data.name;
   return (
@@ -68,7 +73,19 @@ export function MyColleges({ data: _data }: Props) {
     });
   }
   if (!data) return;
-
+  const accepted = [];
+  const notApplied = [];
+  const alreadyApplied = data.filter((x) => {
+    if (x.accepted) {
+      accepted.push(x);
+      return false;
+    }
+    if (!x.applied) {
+      notApplied.push(x);
+      return false;
+    }
+    return true;
+  });
   return (
     <section>
       {college && (
@@ -94,7 +111,7 @@ export function MyColleges({ data: _data }: Props) {
             textDecorationThickness: "2px",
           })}
         >
-          colleges{" "}
+          colleges
         </span>
         <span class={css({ fontSize: "1.5rem" })}>({data.length})</span>
       </div>
@@ -104,12 +121,48 @@ export function MyColleges({ data: _data }: Props) {
           onInput={onInput}
           labelText="Search college"
         />
-        <div class={cardWrapper}>
-          {data.map((x) => (
-            <CollegeCard data={x} setCollege={setCollege} />
-          ))}
-        </div>
+        <CollegeSortType
+          arr={accepted}
+          cls={acceptedCss}
+          setCollege={setCollege}
+          text="Accepted"
+        />
+        <CollegeSortType
+          arr={notApplied}
+          cls={clgHeading}
+          setCollege={setCollege}
+          text="Pending"
+        />
+        <CollegeSortType
+          arr={alreadyApplied}
+          cls={appliedCss}
+          setCollege={setCollege}
+          text="Applied"
+        />
       </section>
     </section>
+  );
+}
+interface CollegeSortType {
+  cls: string | string[];
+  text: string;
+  arr: CollegeData[];
+  setCollege(c: CollegeData): void;
+}
+export function CollegeSortType({
+  cls,
+  text,
+  arr,
+  setCollege,
+}: CollegeSortType) {
+  return (
+    <div>
+      <div class={cls}>{text}</div>
+      <div class={cardWrapper}>
+        {arr.map((x) => (
+          <CollegeCard data={x} setCollege={setCollege} />
+        ))}
+      </div>
+    </div>
   );
 }

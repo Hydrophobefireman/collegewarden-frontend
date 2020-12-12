@@ -14,7 +14,6 @@ import { AnimatedInput } from "../AnimatedInput";
 import { BooleanInfo } from "./BooleanProps";
 import { Deadline } from "./Deadline";
 import { DeleteIcon } from "../Icons/Delete";
-import { EditIcon } from "../Icons/Edit";
 import { Form } from "../Form";
 import { GlobalCollegeInfo } from "./GlobalCollegeInfo";
 import { ModalLayout } from "../Layout/ModalLayout";
@@ -36,7 +35,6 @@ export function EditStage({
   close,
 }: StageProps) {
   const currData = currentCollegeData || (({} as any) as CollegeData);
-  const [editMode, setEdit] = useState(false);
   const [portalURL, setPortalURL] = useState(currData.portalLink || "");
   const [password, setPassword] = useState(currData.portalPassword || "");
   const [timeline, setTimeline] = useState<CollegeData["decisionTimeline"]>(
@@ -71,7 +69,6 @@ export function EditStage({
     next(ret);
   }
 
-  const enabled = !allowReadonlyMode || editMode;
   if (confirmDelete) {
     const closeDialog = () => setConfDelete(false);
     return (
@@ -117,26 +114,14 @@ export function EditStage({
         <section class={modalSection}>
           <div>
             {allowReadonlyMode && (
-              <>
-                <button
-                  style={{ color: "var(--current-text-color)" }}
-                  class={modalActionButton.concat(
-                    editMode ? css({ background: "var(--current-alpha)" }) : ""
-                  )}
-                  onClick={() => setEdit(true)}
-                >
-                  <EditIcon />
-                  <span class={modalActionText}>edit</span>
-                </button>
-                <button
-                  style={{ color: "var(--current-text-color)" }}
-                  class={modalActionButton}
-                  onClick={() => setConfDelete(true)}
-                >
-                  <DeleteIcon />
-                  <span class={modalActionText}>delete</span>
-                </button>
-              </>
+              <button
+                style={{ color: "var(--current-text-color)" }}
+                class={modalActionButton}
+                onClick={() => setConfDelete(true)}
+              >
+                <DeleteIcon />
+                <span class={modalActionText}>delete</span>
+              </button>
             )}
           </div>
 
@@ -148,7 +133,6 @@ export function EditStage({
                 labelText="portal url"
                 onInput={setPortalURL}
                 value={portalURL}
-                disabled={!enabled}
               />
             </div>
             <div class={marginTop}>
@@ -156,42 +140,29 @@ export function EditStage({
                 labelText="portal password"
                 onInput={setPassword}
                 value={password}
-                disabled={!enabled}
               />
             </div>
-            <TimeLine
-              timeline={timeline}
-              setTimeline={setTimeline}
-              disabled={!enabled}
-            />
+            <TimeLine timeline={timeline} setTimeline={setTimeline} />
             <BooleanInfo
               value={accepted}
               setValue={setAccepted}
-              text="have you been accepted?"
-              disabled={!enabled}
+              text="have you been accepted yet?"
             />
             <BooleanInfo
               value={applied}
               setValue={setApplied}
               text="have you applied yet?"
-              disabled={!enabled}
             />
             <BooleanInfo
               value={finAid}
               setValue={setFinAid}
               text="are you applying for fin-aid?"
-              disabled={!enabled}
             />
-            <Deadline
-              setDeadline={setDeadline}
-              disabled={!enabled}
-              deadline={deadline}
-            />
+            <Deadline setDeadline={setDeadline} deadline={deadline} />
             <Notes
               setNotes={setNotes}
               notes={notes}
               name={glCollegeData.name}
-              disabled={!enabled}
             />
             <div class={center}>
               {submitted && (
@@ -199,15 +170,13 @@ export function EditStage({
                   encrypting your data and sending to the server
                 </div>
               )}
-              {(!allowReadonlyMode || enabled) && (
-                <button
-                  class={actionButton}
-                  type="button"
-                  onClick={handleFormSubmit}
-                >
-                  submit
-                </button>
-              )}
+              <button
+                class={[actionButton, css({ marginBottom: "40px" })]}
+                type="button"
+                onClick={handleFormSubmit}
+              >
+                submit
+              </button>
             </div>
           </Form>
         </section>
