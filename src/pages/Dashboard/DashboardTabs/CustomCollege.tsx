@@ -16,7 +16,7 @@ export function CustomCollege({ close }: CustomCollegeProps) {
   const [collegeName, setCollege] = useState("");
   const [collegeData, setCollegeData] = useSharedState(colleges);
   const [stage, setStage] = useState(0);
-  const data = { name: collegeName, id: +new Date() };
+  const data = { name: collegeName, id: -new Date() };
   return stage === 0 ? (
     <ModalLayout close={close}>
       <Form onSubmit={() => setStage(1)}>

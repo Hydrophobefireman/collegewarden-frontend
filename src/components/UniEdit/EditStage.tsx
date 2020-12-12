@@ -43,6 +43,9 @@ export function EditStage({
     currData.decisionTimeline || "RD"
   );
   const [applied, setApplied] = useState(boolOrDefault(currData.applied, true));
+  const [accepted, setAccepted] = useState(
+    boolOrDefault(currData.accepted, false)
+  );
   const [finAid, setFinAid] = useState(
     boolOrDefault(currData.appliedWithFinAid, false)
   );
@@ -61,6 +64,7 @@ export function EditStage({
       applied: applied,
       appliedWithFinAid: finAid,
       notes,
+      accepted,
     };
 
     setSubmitted(true);
@@ -158,6 +162,12 @@ export function EditStage({
             <TimeLine
               timeline={timeline}
               setTimeline={setTimeline}
+              disabled={!enabled}
+            />
+            <BooleanInfo
+              value={accepted}
+              setValue={setAccepted}
+              text="have you been accepted?"
               disabled={!enabled}
             />
             <BooleanInfo

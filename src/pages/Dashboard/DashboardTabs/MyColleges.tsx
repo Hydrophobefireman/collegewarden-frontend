@@ -46,6 +46,7 @@ export function MyColleges({ data: _data }: Props) {
   );
   useEffect(() => {
     setFiltered(_data);
+    setSearch("");
   }, [_data]);
 
   function onInput(value: string) {
@@ -54,8 +55,8 @@ export function MyColleges({ data: _data }: Props) {
   }
 
   function $filter(value: string) {
+    if (!value || !_data) return setFiltered(_data || []);
     $req(() => {
-      if (!value || !_data) return setFiltered(_data || []);
       const cleaned = clean(value);
       setFiltered(
         _data.filter((x) =>

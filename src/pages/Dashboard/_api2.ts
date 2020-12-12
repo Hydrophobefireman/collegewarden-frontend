@@ -13,13 +13,13 @@ export function validateCollegeDataWithNewApi(colleges: CollegeData[]) {
         }, {});
         return colleges.map((college) => {
           const data = college.data;
-          if (data && data.id && data.name) return college;
+          // if (data && data.id && data.name) return college;
           if (data.id) {
-            if (data.__internal) {
+            if (data.id < 0) {
               college.data = data.__internal;
-              return college;
+            } else {
+              college.data = normalized[data.id] || data.__internal;
             }
-            college.data = normalized[data.id];
             return college;
           }
           college.data = {} as any;

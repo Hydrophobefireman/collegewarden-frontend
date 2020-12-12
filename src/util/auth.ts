@@ -9,6 +9,7 @@ import {
 } from "../state";
 import { get, set, subscribe } from "statedrive";
 
+import { clear } from "./idb";
 import { redirect } from "@hydrophobefireman/ui-lib";
 import { userRoutes } from "./http/api_routes";
 
@@ -36,7 +37,7 @@ const auth = {
     };
   },
   logout() {
-    requests.updateTokens("", "");
+    clear();
     set(didFetch, true);
     set(authData, null);
     set(colleges, null);

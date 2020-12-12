@@ -20,6 +20,8 @@ interface CollegeCardProps {
   setCollege(c: CollegeData): void;
 }
 export function CollegeCard({ data, setCollege }: CollegeCardProps) {
+  const func = () => setCollege(data);
+
   return (
     <div class={uniCard}>
       <div
@@ -34,24 +36,41 @@ export function CollegeCard({ data, setCollege }: CollegeCardProps) {
         <div class={collegeName}>{data.data.name}</div>
       </div>
       <div class={infoWrap}>
-        <Info
-          title="decision timeline"
-          data={
-            <>
-              {data.decisionTimeline}{" "}
-              {!data.applied && (
-                <span class={css({ color: "var(--current-fg)" })}>
-                  (application pending!)
-                </span>
-              )}
-            </>
-          }
-          className={isEd(data) ? css({ color: "var(--current-fg)" }) : bold}
-        />
-        <Info
-          title="decision date"
-          data={new Date(data.decisionDate).toLocaleDateString()}
-        />
+        {data.accepted ? (
+          <div class={`${bold} ${css({ color: "#00e400" })}`}>
+            CONGRATULATIONS!!
+          </div>
+        ) : (
+          <>
+            {" "}
+            <Info
+              title="decision timeline"
+              data={
+                <>
+                  {data.decisionTimeline}{" "}
+                  {!data.applied && (
+                    <span class={css({ color: "var(--current-fg)" })}>
+                      {data.data.fallDeadline || data.data.springDeadline ? (
+                        <button class={actionButton} onClick={func}>
+                          check deadlines
+                        </button>
+                      ) : (
+                        "(application pending!)"
+                      )}
+                    </span>
+                  )}
+                </>
+              }
+              className={
+                isEd(data) ? css({ color: "var(--current-fg)" }) : bold
+              }
+            />
+            <Info
+              title="decision date"
+              data={new Date(data.decisionDate).toLocaleDateString()}
+            />
+          </>
+        )}
         <div class={viewMoreWrapper}>
           {!!data.portalLink && (
             <a
@@ -69,7 +88,7 @@ export function CollegeCard({ data, setCollege }: CollegeCardProps) {
               visit portal
             </a>
           )}
-          <button class={actionButton} onClick={() => setCollege(data)}>
+          <button class={actionButton} onClick={func}>
             edit
           </button>
         </div>
