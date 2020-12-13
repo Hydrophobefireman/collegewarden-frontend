@@ -1,14 +1,18 @@
 import { actionButton, bold } from "../../../styles";
 import {
   collegeName,
+  editButtonCss,
   infoWrap,
   nameLogoWrap,
+  openPortalCss,
   uniCard,
   uniName,
   viewMoreWrapper,
 } from "./DashboadTabs.style";
 
 import { CollegeData } from "../../../state";
+import { EditIcon } from "../../../components/Icons/Edit";
+import { ExternalLinkIcon } from "../../..//components/Icons/ExternalLink";
 import { NameLogo } from "../../../components/NameLogo";
 import { css } from "catom";
 
@@ -68,22 +72,13 @@ export function CollegeCard({ data, setCollege }: CollegeCardProps) {
         )}
         <div class={viewMoreWrapper}>
           {!!data.portalLink && (
-            <a
-              target="_blank"
-              class={[
-                actionButton,
-                css({
-                  paddingLeft: "5px",
-                  paddingRight: "5px",
-                  borderRadius: "5px",
-                }),
-              ]}
-              href={data.portalLink}
-            >
+            <a target="_blank" class={openPortalCss} href={data.portalLink}>
+              <ExternalLinkIcon />
               visit portal
             </a>
           )}
-          <button class={actionButton} onClick={func}>
+          <button class={editButtonCss} onClick={func}>
+            <EditIcon />
             edit
           </button>
         </div>

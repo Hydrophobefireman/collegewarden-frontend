@@ -1,4 +1,5 @@
-import { bold } from "../../../styles";
+import { actionButton, bold } from "../../../styles";
+
 import { css } from "catom";
 
 export const searchResultBox = css({
@@ -141,3 +142,25 @@ export const acceptedCss = `${clgHeading} ${css({ color: "#00e400" })}`;
 export const appliedCss = `${clgHeading} ${css({
   color: "var(--current-fg)",
 })}`;
+
+export const editButtonCss = [
+  actionButton,
+  css({
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+  }),
+];
+
+export const openPortalCss = [
+  actionButton,
+  css({
+    paddingLeft: "5px",
+    paddingRight: "5px",
+    borderRadius: "5px",
+    alignItems: "center",
+    justifyContent: "center",
+    display: "inline-flex",
+    textDecoration: "none",
+  }),
+];
