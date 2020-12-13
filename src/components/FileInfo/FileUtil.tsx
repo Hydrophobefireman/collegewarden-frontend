@@ -4,12 +4,12 @@ import { FileData, files } from "../../state";
 import { dec, enc } from "../../crypto/util";
 import { fileRoutes, userRoutes } from "../../util/http/api_routes";
 
+import { FakeWeakMap } from "@hydrophobefireman/j-utils";
 import { TabProps } from "../../pages/Dashboard/types";
 import { encrypt } from "../../crypto/encrypt";
 import { fileCard } from "../../pages/Dashboard/DashboardTabs/DashboadTabs.style";
 import { getArrayBufferFromUser } from "../../util/file";
 import { set } from "statedrive";
-import { FakeWeakMap } from "@hydrophobefireman/j-utils";
 
 export async function upload(
   password: string
@@ -46,7 +46,7 @@ export function FileEntry({ data, password, open }: FileEntryProps) {
   const fn = getFileName(data, password);
   return (
     <button class={fileCard} data-id={data.file_id} onClick={() => open(data)}>
-      <div>{fn}</div>
+      <span>{fn}</span>
     </button>
   );
 }
