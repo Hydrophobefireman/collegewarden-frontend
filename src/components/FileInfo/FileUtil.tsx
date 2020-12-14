@@ -12,9 +12,10 @@ import { getArrayBufferFromUser } from "../../util/file";
 import { set } from "statedrive";
 
 export async function upload(
-  password: string
+  password: string,
+  fileData?: File[]
 ): Promise<{ data: unknown; error?: string; name: string }[]> {
-  const data = await getArrayBufferFromUser();
+  const data = await getArrayBufferFromUser(fileData);
   return Promise.all(
     data.map(async ({ buf, name, type }) => {
       const fn = enc(password);

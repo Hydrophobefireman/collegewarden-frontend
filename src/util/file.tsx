@@ -3,15 +3,19 @@ export function nextEvent(obj: EventTarget, evt: string) {
     obj.addEventListener(evt, resolve, { once: true })
   );
 }
-export async function getArrayBufferFromUser() {
-  //   console.log("ok");
-  const input = document.createElement("input");
-  input.type = "file";
-  input.multiple = true;
-  const next = nextEvent(input, "change");
-  input.click();
-  await next;
-  const files = Array.from(input.files);
+export async function getArrayBufferFromUser(fileData?: File[]) {
+  let files: File[] = [];
+  if (!fileData) {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.multiple = true;
+    const next = nextEvent(input, "change");
+    input.click();
+    await next;
+    files = Array.from(input.files);
+  } else {
+    files = fileData;
+  }
   return Promise.all(
     files.map(async (file) => ({
       buf: await asArrayBuffer(file),

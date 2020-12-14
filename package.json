@@ -24,7 +24,7 @@
     "@hydrophobefireman/j-utils": "^2.1.6",
     "@hydrophobefireman/qwc": "^0.0.6",
     "@hydrophobefireman/ui-lib": "1.8.2",
-    "statedrive": "^0.0.8"
+    "statedrive": "^0.0.11"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",

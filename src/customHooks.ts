@@ -7,7 +7,6 @@ import {
   useState,
 } from "@hydrophobefireman/ui-lib";
 
-import { auth } from "./util/auth";
 import { authData } from "./state";
 import { useSharedStateValue } from "statedrive";
 
@@ -64,4 +63,34 @@ export function useRequiredAuthentication(path: string): boolean {
     }
   }, [isLoggedIn]);
   return isLoggedIn;
+}
+const preventDefault = (e: Event) => e.preventDefault();
+export function useFileDrop(
+  el?: HTMLElement
+): [File[] | null, (a: null) => void] {
+  el = el || document.body;
+  const [files, setFiles] = useState(null);
+  useEffect(() => {
+    const onDrop = (e: DragEvent) => {
+      e.stopPropagation();
+      e.preventDefault();
+      if (e.dataTransfer.items) {
+        const tf = Array.from(e.dataTransfer.items);
+        setFiles(
+          tf
+            .map((i) => (i.kind === "file" ? i.getAsFile() : null))
+            .filter(Boolean)
+        );
+      } else {
+        setFiles(Array.from(e.dataTransfer.files));
+      }
+    };
+    el.addEventListener("drop", onDrop);
+    el.addEventListener("dragover", preventDefault);
+    return () => {
+      el.removeEventListener("drop", onDrop);
+      el.removeEventListener("dragover", preventDefault);
+    };
+  }, []);
+  return [files && files.length ? files : null, setFiles];
 }

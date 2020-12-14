@@ -27,6 +27,7 @@ import { TabProps } from "../types";
 import { bold } from "../../../styles";
 import { cardWrapper } from "./DashboadTabs.style";
 import { css } from "catom";
+import { useFileDrop } from "../../../customHooks";
 import { useSharedStateValue } from "statedrive";
 
 export function Files({ setMessage }: TabProps): any {
@@ -46,6 +47,13 @@ export function Files({ setMessage }: TabProps): any {
   const [filteredUnsortedFilesAndNotes, setFilteredData] = useState<FileData[]>(
     null
   );
+  const [filesDropped, setDroppedFiles] = useFileDrop();
+  console.log(filesDropped);
+  useEffect(() => {
+    if (!filesDropped || !password) return;
+    wrapUpload(upload(password, filesDropped), setMessage);
+    setDroppedFiles(null);
+  }, [filesDropped, password]);
   useEffect(() => {
     return searchFiles(
       search,
