@@ -48,7 +48,6 @@ export function Files({ setMessage }: TabProps): any {
     null
   );
   const [filesDropped, setDroppedFiles] = useFileDrop();
-  console.log(filesDropped);
   useEffect(() => {
     if (!filesDropped || !password) return;
     wrapUpload(upload(password, filesDropped), setMessage);

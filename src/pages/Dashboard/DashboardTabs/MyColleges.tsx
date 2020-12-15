@@ -157,7 +157,13 @@ export function CollegeSortType({
 }: CollegeSortType) {
   return (
     <div>
-      <div class={cls}>{text}</div>
+      <div class={cls}>
+        {arr && arr.length > 0 && (
+          <span>
+            {text} ({arr.length})
+          </span>
+        )}
+      </div>
       <div class={cardWrapper}>
         {arr.map((x) => (
           <CollegeCard data={x} setCollege={setCollege} />
