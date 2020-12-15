@@ -126,18 +126,21 @@ export function MyColleges({ data: _data }: Props) {
           cls={acceptedCss}
           setCollege={setCollege}
           text="Accepted"
+          infoCls={css({ color: "#00e400" })}
         />
         <CollegeSortType
           arr={notApplied}
           cls={clgHeading}
           setCollege={setCollege}
           text="Pending"
+          infoCls=""
         />
         <CollegeSortType
           arr={alreadyApplied}
           cls={appliedCss}
           setCollege={setCollege}
           text="Applied"
+          infoCls={css({ color: "var(--current-fg)" })}
         />
       </section>
     </section>
@@ -147,28 +150,32 @@ interface CollegeSortType {
   cls: string | string[];
   text: string;
   arr: CollegeData[];
+  infoCls: string | string[];
   setCollege(c: CollegeData): void;
 }
 export function CollegeSortType({
   cls,
   text,
   arr,
+  infoCls,
   setCollege,
 }: CollegeSortType) {
   return (
-    <div>
-      <div class={cls}>
-        {arr && arr.length > 0 && (
-          <span>
-            {text} ({arr.length})
+    arr &&
+    arr.length > 0 && (
+      <div>
+        <div>
+          <span class={cls}>{text}</span>{" "}
+          <span class={[css({ fontSize: "1.5rem" })].concat(infoCls)}>
+            ({arr.length})
           </span>
-        )}
+        </div>
+        <div class={cardWrapper}>
+          {arr.map((x) => (
+            <CollegeCard data={x} setCollege={setCollege} />
+          ))}
+        </div>
       </div>
-      <div class={cardWrapper}>
-        {arr.map((x) => (
-          <CollegeCard data={x} setCollege={setCollege} />
-        ))}
-      </div>
-    </div>
+    )
   );
 }
