@@ -11,8 +11,8 @@ import { RefType } from "@hydrophobefireman/ui-lib";
 import { clean } from "../../../util/validate/validators";
 import { decrypt } from "../../../crypto/decrypt";
 import { fileRoutes } from "../../../util/http/api_routes";
+import { guard } from "../../../util/guard";
 
-export { guard } from "../../../util/guard";
 export { clean } from "../../../util/validate/validators";
 
 export const $req = window.requestAnimationFrame

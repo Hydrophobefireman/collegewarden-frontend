@@ -23,9 +23,7 @@ import { decryptJson } from "../../crypto/decrypt";
 import { enc } from "../../crypto/util";
 import { encryptJson } from "../../crypto/encrypt";
 import { fileRoutes } from "../../util/http/api_routes";
-import { guard } from "../../pages/Dashboard/DashboardTabs/util";
-
-export { guard } from "../../util/guard";
+import { guard } from "../../util/guard";
 
 interface NoteEditorProps {
   close(): void;
