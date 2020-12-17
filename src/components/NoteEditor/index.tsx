@@ -1,26 +1,31 @@
-import { css } from "catom";
-import { ModalLayout } from "../Layout/ModalLayout";
-import { AnimatedInput } from "../AnimatedInput";
-import { useEffect, useRef, useState } from "@hydrophobefireman/ui-lib";
-import { actionButton } from "../../styles";
+import * as requests from "../../util/http/requests";
+
 import {
   closeButton,
   inlineContainer,
   notesArea,
 } from "../UniEdit/UniEdit.styles";
-import { Form } from "../Form";
-import { FileData } from "../../state";
-import * as requests from "../../util/http/requests";
-import { fileRoutes } from "../../util/http/api_routes";
-import { decryptJson } from "../../crypto/decrypt";
-import { encryptJson } from "../../crypto/encrypt";
 import {
   deleteFile,
   getDecryptedFileProp,
   getFileList,
 } from "../FileInfo/FileUtil";
-import { enc } from "../../crypto/util";
+import { useEffect, useState } from "@hydrophobefireman/ui-lib";
+
+import { AnimatedInput } from "../AnimatedInput";
 import { DeleteConfirmation } from "../DeleteConfirmation";
+import { FileData } from "../../state";
+import { Form } from "../Form";
+import { ModalLayout } from "../Layout/ModalLayout";
+import { actionButton } from "../../styles";
+import { css } from "catom";
+import { decryptJson } from "../../crypto/decrypt";
+import { enc } from "../../crypto/util";
+import { encryptJson } from "../../crypto/encrypt";
+import { fileRoutes } from "../../util/http/api_routes";
+import { guard } from "../../pages/Dashboard/DashboardTabs/util";
+
+export { guard } from "../../util/guard";
 
 interface NoteEditorProps {
   close(): void;
@@ -54,6 +59,7 @@ export function NoteEditor({
       if ("error" in x) {
         return setMessage({ isError: true, message: x.error });
       }
+      if (!guard(ArrayBuffer, x)) return;
       const buf = x as ArrayBuffer;
       decryptJson(
         { encryptedBuf: buf, meta: data.file_enc_meta },

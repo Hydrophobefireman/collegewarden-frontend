@@ -4,6 +4,7 @@ import {
   Path,
   Router,
   useEffect,
+  useMemo,
 } from "@hydrophobefireman/ui-lib";
 
 import { ChunkLoading } from "../ChunkLoadingComponent";
@@ -34,12 +35,13 @@ export function RouteLoader() {
 }
 
 function RouteComponent({ match, render, params }) {
+  const func = useMemo(() => (R: ComponentType) => <R params={params} />, [
+    params,
+  ]);
   return (
-    <section data-app-state={match} class={css({ padding: "1rem" })}>
+    <section data-app-state={match} class="route-section">
       <AsyncComponent
-        componentPromise={() =>
-          render().then((R: ComponentType) => <R params={params} />)
-        }
+        componentPromise={() => render().then(func)}
         fallback={ChunkLoading}
       />
     </section>

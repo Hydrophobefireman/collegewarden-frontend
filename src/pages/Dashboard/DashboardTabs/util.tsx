@@ -12,6 +12,7 @@ import { clean } from "../../../util/validate/validators";
 import { decrypt } from "../../../crypto/decrypt";
 import { fileRoutes } from "../../../util/http/api_routes";
 
+export { guard } from "../../../util/guard";
 export { clean } from "../../../util/validate/validators";
 
 export const $req = window.requestAnimationFrame
@@ -47,6 +48,7 @@ export function searchItems(needle: string, haystack: GlCollegeData[]) {
 interface SetMessage {
   (a: { message?: string; isError?: boolean }): void;
 }
+
 interface OpenFileProps {
   setDownloading(a: string): void;
   abort: RefType<boolean>;
@@ -70,8 +72,9 @@ export function openFileExternally({
       setDownloading(null);
       if (abort.current) return;
       if ("error" in x) return setMessage({ message: x.error, isError: true });
+      if (!guard(ArrayBuffer, x)) return;
 
-      const buf = x as ArrayBuffer;
+      const buf = x;
 
       setDownloading("decrypting file...");
       const ret = await decrypt(

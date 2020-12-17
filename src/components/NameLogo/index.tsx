@@ -13,6 +13,7 @@ export function NameLogo({ text, size }: NameLogoProps) {
         display: "inline-flex",
         borderRadius: "50%",
         padding: "2px",
+        userSelect: "none",
         border: "2px solid var(--current-fg)",
         background: "transparent",
         color: "var(--current-text-color)",

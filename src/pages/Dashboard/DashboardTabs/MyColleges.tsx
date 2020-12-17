@@ -164,12 +164,10 @@ export function CollegeSortType({
     arr &&
     arr.length > 0 && (
       <div>
-        <div>
-          <span class={cls}>{text}</span>{" "}
-          <span class={[css({ fontSize: "1.5rem" })].concat(infoCls)}>
-            ({arr.length})
-          </span>
-        </div>
+        <span class={cls}>{text}</span>{" "}
+        <span class={[css({ fontSize: "1.5rem" })].concat(infoCls)}>
+          ({arr.length})
+        </span>
         <div class={cardWrapper}>
           {arr.map((x) => (
             <CollegeCard data={x} setCollege={setCollege} />
