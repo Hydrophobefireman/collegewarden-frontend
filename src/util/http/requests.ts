@@ -1,6 +1,6 @@
-import { Object_assign } from "@hydrophobefireman/j-utils";
-
 import { get as idbGet, set as idbSet } from "../idb";
+
+import { Object_assign } from "@hydrophobefireman/j-utils";
 import { userRoutes } from "./api_routes";
 
 interface AuthenticationTokens {
@@ -11,6 +11,7 @@ interface AuthenticationTokens {
 export interface AbortableFetchResponse<T> {
   result: Promise<{ data: T; error?: string }>;
   controller: AbortController;
+  headers: Promise<Headers>;
 }
 const tokens: AuthenticationTokens = { accessToken: null, refreshToken: null };
 
@@ -70,7 +71,8 @@ async function _awaitData<T>(url: string, options?: RequestInit, type?: RType) {
     console.log(e);
     data = { error: "a network error occured", data: null };
   }
-  return data;
+
+  return { data, headers: response && response.headers };
 }
 function _prepareFetch<T = {}>(
   url: string,
@@ -80,9 +82,10 @@ function _prepareFetch<T = {}>(
   const controller = new AbortController();
   const signal = controller.signal;
   options.signal = signal;
-  const data = _awaitData(url, options, type);
-
-  return { result: data, controller } as AbortableFetchResponse<T>;
+  const prom = _awaitData(url, options, type);
+  const data = prom.then(({ data }) => data);
+  const headers = prom.then(({ headers }) => headers);
+  return { result: data, controller, headers } as AbortableFetchResponse<T>;
 }
 
 const wrap = <T extends Array<any>, U>(fn: (...args: T) => U) => {
@@ -100,6 +103,7 @@ const wrap = <T extends Array<any>, U>(fn: (...args: T) => U) => {
         }
         return js;
       }),
+      headers: res.headers,
     } as unknown) as U;
     return resp;
   }
@@ -149,6 +153,7 @@ function _getBinary(
   return _prepareFetch<ArrayBuffer>(url, options, "arrayBuffer") as {
     result: Promise<ArrayBuffer | { error?: string }>;
     controller: AbortController;
+    headers: Promise<Headers>;
   };
 }
 function _postBinary<T>(

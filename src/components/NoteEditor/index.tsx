@@ -1,5 +1,6 @@
 import * as requests from "../../util/http/requests";
 
+import { FileData, files } from "../../state";
 import {
   closeButton,
   inlineContainer,
@@ -7,6 +8,7 @@ import {
 } from "../UniEdit/UniEdit.styles";
 import {
   deleteFile,
+  evictWeakMapCache,
   getDecryptedFileProp,
   getFileList,
 } from "../FileInfo/FileUtil";
@@ -14,7 +16,6 @@ import { useEffect, useState } from "@hydrophobefireman/ui-lib";
 
 import { AnimatedInput } from "../AnimatedInput";
 import { DeleteConfirmation } from "../DeleteConfirmation";
-import { FileData } from "../../state";
 import { Form } from "../Form";
 import { ModalLayout } from "../Layout/ModalLayout";
 import { actionButton } from "../../styles";
@@ -24,6 +25,7 @@ import { enc } from "../../crypto/util";
 import { encryptJson } from "../../crypto/encrypt";
 import { fileRoutes } from "../../util/http/api_routes";
 import { guard } from "../../util/guard";
+import { set } from "statedrive";
 
 interface NoteEditorProps {
   close(): void;
@@ -49,23 +51,43 @@ export function NoteEditor({
     if (!data) {
       return;
     }
+    evictWeakMapCache(data);
     setTitle(getTitle);
-    const { result, controller } = requests.getBinary(
+  }, [data && data.file_enc_meta, data.file_id]);
+  useEffect(() => {
+    if (!data) {
+      return;
+    }
+    setTitle(getTitle);
+    const { result, controller, headers } = requests.getBinary(
       fileRoutes.download(data.file_id)
     );
-    result.then((x) => {
+    result.then(async (x) => {
+      const h = await headers;
       if ("error" in x) {
         return setMessage({ isError: true, message: x.error });
       }
       if (!guard(ArrayBuffer, x)) return;
       const buf = x as ArrayBuffer;
-      decryptJson(
-        { encryptedBuf: buf, meta: data.file_enc_meta },
-        password
-      ).then((x) => {
+      const old = data.file_enc_meta;
+      const curr = h.get("x-file-meta");
+
+      let meta = old;
+      if (curr && old != curr) {
+        meta = curr;
+        // data.file_enc_meta = curr;
+        set(files, (old) =>
+          old.map((x) => {
+            if (x.file_id === data.file_id) {
+              x.file_enc_meta = curr;
+            }
+            return x;
+          })
+        );
+      }
+      decryptJson({ encryptedBuf: buf, meta }, password).then((x) => {
         if (x.error) return setMessage({ isError: true, message: x.error });
         const { note } = x;
-        setTitle(title);
         setNotes(note);
       });
     });
