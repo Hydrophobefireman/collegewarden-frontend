@@ -121,7 +121,8 @@ export function Files({ setMessage }: TabProps) {
       </section>
     );
   }
-  if (unFilteredUnsortedfilesAndNotes == null) return <FileTabLoader />;
+  if (unFilteredUnsortedfilesAndNotes == null && password)
+    return <FileTabLoader />;
 }
 
 interface FilesListProps extends TabProps {

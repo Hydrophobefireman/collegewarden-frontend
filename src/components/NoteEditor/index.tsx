@@ -53,7 +53,7 @@ export function NoteEditor({
     }
     evictWeakMapCache(data);
     setTitle(getTitle);
-  }, [data && data.file_enc_meta, data.file_id]);
+  }, [data && data.file_enc_meta, data && data.file_id]);
   useEffect(() => {
     if (!data) {
       return;
