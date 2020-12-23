@@ -34,6 +34,7 @@ const auth = {
         if (data) set(authData, data);
         return resp;
       }),
+      headers: response.headers,
     };
   },
   logout() {
