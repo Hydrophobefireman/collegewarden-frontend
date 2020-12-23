@@ -73,6 +73,9 @@ export function NoteEditor({
       const curr = h.get("x-file-meta");
 
       let meta = old;
+      // we're checking if somehow the note got updated (other device/tab), in that case
+      // the encryption meta data would change and decrypt would throw
+      // even with a valid key
       if (curr && old != curr) {
         meta = curr;
         // data.file_enc_meta = curr;

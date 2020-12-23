@@ -17,16 +17,14 @@ import { AddCollegeIcon } from "../../../components/Icons/AddCollege";
 import { AddUniversity } from "./AddUniversity";
 import { AnimatedInput } from "../../../components/AnimatedInput";
 import { ChunkLoading } from "../../../components/ChunkLoadingComponent";
+import { CustomCollege } from "./CustomCollege";
 import { FilterIcon } from "../../../components/Icons/Filter";
 import { ModalLayout } from "../../../components/Layout/ModalLayout";
 import { Object_entries } from "@hydrophobefireman/j-utils";
 import { SearchResults } from "./SearchResults";
 import { TabProps } from "../types";
-import { css } from "catom";
 import { prop2text } from "../../../util/prop2text";
 import { searchResultBox } from "./DashboadTabs.style";
-import { Form } from "src/components/Form";
-import { CustomCollege } from "./CustomCollege";
 
 export function Search({ setMessage }: TabProps) {
   const [colleges, setColleges] = useState<GlCollegeData[]>(null);
@@ -75,13 +73,7 @@ export function Search({ setMessage }: TabProps) {
     setF({ ...f });
   }
   const isReady = !loading && !!colleges;
-  if (!isReady)
-    return (
-      <div class={center}>
-        <ChunkLoading />
-        <div>Fetching...</div>
-      </div>
-    );
+  if (!isReady) return;
   return (
     <div class={tabContainer}>
       {isAddingManual && <CustomCollege close={() => setManual(false)} />}

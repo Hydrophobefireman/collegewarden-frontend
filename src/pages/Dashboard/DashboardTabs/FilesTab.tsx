@@ -15,8 +15,13 @@ import {
   UploadFiles,
   UploadNotes,
 } from "./FileTabActions";
+import {
+  RefType,
+  useEffect,
+  useRef,
+  useState,
+} from "@hydrophobefireman/ui-lib";
 import { openFileExternally, searchFiles, wrapUpload } from "./util";
-import { useEffect, useRef, useState } from "@hydrophobefireman/ui-lib";
 
 import { AnimatedInput } from "../../../components/AnimatedInput";
 import { DeleteConfirmation } from "../../../components/DeleteConfirmation";
@@ -30,19 +35,14 @@ import { css } from "catom";
 import { useFileDrop } from "../../../customHooks";
 import { useSharedStateValue } from "statedrive";
 
-export function Files({ setMessage }: TabProps): any {
+export function Files({ setMessage }: TabProps) {
   const password = useSharedStateValue(passwordData);
+  const abort = useRef(false);
   const unFilteredUnsortedfilesAndNotes = useSharedStateValue<FileData[]>(
     files
   );
   const [sortedFileList, setList] = useState<FileData[]>(null);
   const [sortedNoteList, setNoteList] = useState<FileData[]>(null);
-  const [loading, setLoading] = useState(false);
-  const [openFile, setOpen] = useState<FileData>(null);
-  const [shouldDel, setDel] = useState<boolean>(false);
-  const [downloadingState, setDownloading] = useState<string>(null);
-  const [notes, setNotes] = useState<FileData | boolean>(null);
-  const abort = useRef(false);
   const [search, setSearch] = useState("");
   const [filteredUnsortedFilesAndNotes, setFilteredData] = useState<FileData[]>(
     null
@@ -53,6 +53,7 @@ export function Files({ setMessage }: TabProps): any {
     wrapUpload(upload(password, filesDropped), setMessage);
     setDroppedFiles(null);
   }, [filesDropped, password]);
+
   useEffect(() => {
     return searchFiles(
       search,
@@ -61,12 +62,11 @@ export function Files({ setMessage }: TabProps): any {
       setFilteredData
     );
   }, [search, unFilteredUnsortedfilesAndNotes, password]);
+
   useEffect(() => {
-    setLoading(true);
     getFileList(setMessage);
     return () => (abort.current = true);
   }, []);
-
   useEffect(() => {
     if (!password || !filteredUnsortedFilesAndNotes) return;
     const unsortedFiles: FileData[] = [];
@@ -95,6 +95,57 @@ export function Files({ setMessage }: TabProps): any {
     );
   }, [filteredUnsortedFilesAndNotes, password]);
 
+  if (
+    password &&
+    sortedNoteList !=
+      sortedFileList /** both will only be equal if they're both null */
+  ) {
+    return (
+      <section>
+        <div class={css({ marginTop: "1rem", marginBottom: "1rem" })}>
+          <AnimatedInput
+            labelText="search"
+            value={search}
+            onInput={setSearch}
+          />
+        </div>
+        <FilesList
+          abort={abort}
+          filteredUnsortedFilesAndNotes={filteredUnsortedFilesAndNotes}
+          password={password}
+          setMessage={setMessage}
+          sortedFileList={sortedFileList}
+          sortedNoteList={sortedNoteList}
+          unFilteredUnsortedfilesAndNotes={unFilteredUnsortedfilesAndNotes}
+        />
+      </section>
+    );
+  }
+}
+
+interface FilesListProps extends TabProps {
+  password: string;
+  unFilteredUnsortedfilesAndNotes: FileData[];
+  filteredUnsortedFilesAndNotes: FileData[];
+  sortedNoteList: FileData[];
+  sortedFileList: FileData[];
+  abort: RefType<boolean>;
+}
+
+function FilesList({
+  setMessage,
+  password,
+  unFilteredUnsortedfilesAndNotes,
+  filteredUnsortedFilesAndNotes,
+  sortedFileList,
+  sortedNoteList,
+  abort,
+}: FilesListProps): any {
+  const [openFile, setOpen] = useState<FileData>(null);
+  const [shouldDel, setDel] = useState<boolean>(false);
+  const [downloadingState, setDownloading] = useState<string>(null);
+  const [notes, setNotes] = useState<FileData | boolean>(null);
+
   if (shouldDel)
     return (
       <DeleteConfirmation
@@ -116,7 +167,6 @@ export function Files({ setMessage }: TabProps): any {
       setMessage={setMessage}
     />
   );
-  if (sortedFileList == null && loading && password) return <FileTabLoader />;
   if (
     unFilteredUnsortedfilesAndNotes &&
     unFilteredUnsortedfilesAndNotes.length == 0
@@ -132,97 +182,87 @@ export function Files({ setMessage }: TabProps): any {
       </>
     );
   }
-  if (password) {
-    return (
-      <section>
-        <div class={css({ marginTop: "1rem", marginBottom: "1rem" })}>
-          <AnimatedInput
-            labelText="search"
-            value={search}
-            onInput={setSearch}
-          />
+
+  return (
+    <>
+      {notesEl}
+      {openFile && (
+        <FileInfo
+          downloadingState={downloadingState}
+          openFile={openFile}
+          openFileExternally={() =>
+            openFileExternally({
+              abort,
+              openFile,
+              password,
+              setDownloading,
+              setMessage,
+              setOpen,
+            })
+          }
+          password={password}
+          setDelete={() => setDel(true)}
+          setOpen={setOpen}
+        />
+      )}
+      <div class={css({ marginTop: "2rem", textAlign: "right" })}>
+        <UploadFiles onClick={() => wrapUpload(upload(password), setMessage)} />
+        <UploadNotes onClick={() => setNotes(true)} />
+      </div>
+      <div>
+        <div>
+          <b
+            class={[
+              bold,
+              css({ color: "var(--current-fg)", fontSize: "2rem" }),
+            ]}
+          >
+            notes
+          </b>
         </div>
-        {notesEl}
-        {openFile && (
-          <FileInfo
-            downloadingState={downloadingState}
-            openFile={openFile}
-            openFileExternally={() =>
-              openFileExternally({
-                abort,
-                openFile,
-                password,
-                setDownloading,
-                setMessage,
-                setOpen,
-              })
-            }
-            password={password}
-            setDelete={() => setDel(true)}
-            setOpen={setOpen}
-          />
+        {truthyArr(sortedNoteList) ? (
+          <div class={cardWrapper}>
+            {sortedNoteList.map((x) => (
+              <Note
+                data={x}
+                open={() => {
+                  setNotes(x);
+                }}
+                password={password}
+              />
+            ))}
+          </div>
+        ) : (
+          <div>No notes found</div>
         )}
-        <div class={css({ marginTop: "2rem", textAlign: "right" })}>
-          <UploadFiles
-            onClick={() => wrapUpload(upload(password), setMessage)}
-          />
-          <UploadNotes onClick={() => setNotes(true)} />
-        </div>
+      </div>
+      <div>
         <div>
-          <div>
-            <b
-              class={[
-                bold,
-                css({ color: "var(--current-fg)", fontSize: "2rem" }),
-              ]}
-            >
-              notes
-            </b>
-          </div>
-          {truthyArr(sortedNoteList) ? (
-            <div class={cardWrapper}>
-              {sortedNoteList.map((x) => (
-                <Note
-                  data={x}
-                  open={() => {
-                    setNotes(x);
-                  }}
-                  password={password}
-                />
-              ))}
-            </div>
-          ) : (
-            <div>No notes found</div>
-          )}
+          <b
+            class={[
+              bold,
+              css({ color: "var(--current-fg)", fontSize: "2rem" }),
+            ]}
+          >
+            files
+          </b>
         </div>
-        <div>
-          <div>
-            <b
-              class={[
-                bold,
-                css({ color: "var(--current-fg)", fontSize: "2rem" }),
-              ]}
-            >
-              files
-            </b>
+        {truthyArr(sortedFileList) ? (
+          <div class={cardWrapper}>
+            {sortedFileList.map((x) => (
+              <FileEntry
+                data={x}
+                password={password}
+                open={(x) => setOpen(x)}
+              />
+            ))}
           </div>
-          {truthyArr(sortedFileList) ? (
-            <div class={cardWrapper}>
-              {sortedFileList.map((x) => (
-                <FileEntry
-                  data={x}
-                  password={password}
-                  open={(x) => setOpen(x)}
-                />
-              ))}
-            </div>
-          ) : (
-            <div>no files found</div>
-          )}
-        </div>
-      </section>
-    );
-  }
+        ) : (
+          <div>no files found</div>
+        )}
+      </div>
+    </>
+  );
 }
 
 const truthyArr = (x: any[]) => x && x.length > 0;
