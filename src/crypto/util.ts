@@ -1,56 +1,38 @@
-function textToChars(text: string) {
-  return text.split("").map((c) => c.charCodeAt(0));
-}
-function applySaltToChar(code: number, salt: string) {
-  return textToChars(salt).reduce((a, b) => a ^ b, code);
-}
-const byteHex = (n: number) => `0${Number(n).toString(16)}`.substr(-2);
+export * from "./string_enc";
 
-export function enc(salt: string) {
-  return (text: string) =>
-    text
-      .split("")
-      .map(textToChars)
-      .map((v) => applySaltToChar(v as any, salt))
-      .map(byteHex)
-      .join("");
-}
-export function dec(salt: string) {
-  return (encoded: string) =>
-    encoded
-      .match(/.{1,2}/g)
-      .map((hex: string) => parseInt(hex, 16))
-      .map((v: number) => applySaltToChar(v, salt))
-      .map((charCode: number) => String.fromCharCode(charCode))
-      .join("");
+const textEncoder = new TextEncoder();
+
+const ITER_COUNT = 200000;
+
+function getRawKey(password: string): Promise<CryptoKey> {
+  const encPassword = textEncoder.encode(password);
+  return crypto.subtle.importKey(
+    "raw",
+    encPassword,
+    { name: "PBKDF2" },
+    false,
+    ["deriveBits", "deriveKey"]
+  );
 }
 
-export async function generateKey() {
-  const key = await crypto.subtle.generateKey(
+export async function generateKey(
+  password: string,
+  salt: Uint8Array,
+  iterCount: number = ITER_COUNT
+) {
+  const key = await crypto.subtle.deriveKey(
+    {
+      name: "PBKDF2",
+      salt,
+      iterations: iterCount,
+      hash: "SHA-512",
+    },
+    await getRawKey(password),
     { name: "AES-GCM", length: 256 },
     true,
     ["encrypt", "decrypt"]
   );
-  const exportableKey = await crypto.subtle.exportKey("jwk", key);
-  return { key, exportableKey };
-}
-
-export function importKey(exportableKey: JsonWebKey) {
-  return crypto.subtle.importKey(
-    "jwk",
-    exportableKey as any,
-    { name: "AES-GCM" },
-    true,
-    ["encrypt", "decrypt"]
-  );
-}
-
-export function encKey(key: JsonWebKey, password: string) {
-  return enc(password)(JSON.stringify(key));
-}
-
-export function decKey(encrypted: string, password: string) {
-  return JSON.parse(dec(password)(encrypted)) as JsonWebKey;
+  return { key, ITER_COUNT: iterCount };
 }
 
 export interface EncData {

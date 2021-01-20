@@ -1,5 +1,5 @@
-import { get } from "statedrive";
 import { authData } from "../../state";
+import { get } from "statedrive";
 import { host } from "../constants";
 const absoluteURL = (str: string): string => {
   return new URL(str, host).href;
@@ -11,6 +11,7 @@ export const userRoutes = {
   refreshAuthToken: absoluteURL("/accounts/token/refresh/"),
   checkAuth: absoluteURL("/accounts/whoami"),
   getFiles: () => absoluteURL(`/accounts/${get(authData).user}/files`),
+  interact: absoluteURL("/_interact"),
 };
 
 export const fileRoutes = {
