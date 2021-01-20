@@ -1,1 +1,1 @@
-export const interact = (data:ant)=>get()
+// 

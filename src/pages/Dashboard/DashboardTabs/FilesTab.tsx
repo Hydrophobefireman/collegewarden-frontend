@@ -200,9 +200,6 @@ function FilesList({
               setDownloading,
               setMessage,
               setOpen,
-              deleteFile(openFile) {
-                deleteFile(openFile, unFilteredUnsortedfilesAndNotes);
-              },
             })
           }
           password={password}
