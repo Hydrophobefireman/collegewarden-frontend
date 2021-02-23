@@ -4,7 +4,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const autoPrefixPlugin = require("autoprefixer");
 const HTMLInlineCSSWebpackPlugin = require("html-inline-css-webpack-plugin")
   .default;
-const WebpackModuleNoModulePlugin = require("@hydrophobefireman/module-nomodule");
+const WebpackModuleNoModulePlugin = require("webpack-module-nomodule-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const cfg = require("./.babelrc");
 const { autoPrefixCSS } = require("catom/css");
@@ -131,9 +131,9 @@ function getCfg(isLegacy) {
       isProd &&
         new OptimizeCSSAssetsPlugin({ cssProcessor: require("cssnano") }),
       isProd && new HTMLInlineCSSWebpackPlugin({}),
-      new WebpackModuleNoModulePlugin(isLegacy ? "legacy" : "modern"),
+      // new WebpackModuleNoModulePlugin(isLegacy ? "legacy" : "modern"),
     ].filter(Boolean),
   };
 }
 
-module.exports = isProd ? [getCfg(false), getCfg(true)] : getCfg(false);
+module.exports = getCfg(false);

@@ -1,6 +1,6 @@
 import * as requests from "../util/http/requests";
 
-import { colleges, didFetch, files, passwordData } from "../state";
+import { colleges, files, passwordData } from "../state";
 import { decrypt, decryptJson } from "./decrypt";
 import { get, set } from "statedrive";
 import {
