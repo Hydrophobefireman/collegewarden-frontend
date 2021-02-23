@@ -77,7 +77,7 @@ function getCfg(isLegacy) {
     output: {
       environment: getEnvObject(isLegacy),
       path: `${__dirname}/docs/`,
-      filename: `${isLegacy ? "legacy" : "es6"}/[name]-[contenthash].js`,
+      filename: `${isLegacy ? "legacy" : "es6"}/[name]-[chunkhash].js`,
     },
     resolve: { extensions: [".ts", ".tsx", ".js", ".json"] },
     mode,
@@ -131,9 +131,9 @@ function getCfg(isLegacy) {
       isProd &&
         new OptimizeCSSAssetsPlugin({ cssProcessor: require("cssnano") }),
       isProd && new HTMLInlineCSSWebpackPlugin({}),
-      // new WebpackModuleNoModulePlugin(isLegacy ? "legacy" : "modern"),
+      new WebpackModuleNoModulePlugin(isLegacy ? "legacy" : "modern"),
     ].filter(Boolean),
   };
 }
 
-module.exports = getCfg(false);
+module.exports = isProd ? [getCfg(true), getCfg(false)] : getCfg(false);

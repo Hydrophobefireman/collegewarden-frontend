@@ -765,7 +765,7 @@
   dependencies:
     "@babel/helper-plugin-utils" "^7.12.13"
 
-"@babel/plugin-transform-runtime@^7.13.6":
+"@babel/plugin-transform-runtime@^7.13.4":
   version "7.13.6"
   resolved "https://registry.yarnpkg.com/@babel/plugin-transform-runtime/-/plugin-transform-runtime-7.13.6.tgz#c11c806f023d2065bbcc9b751702f4008245951c"
   integrity sha512-QsTomUTIeOdYrNsOMJRSp2QzGvB1KYD4ePCC8Mei2SuoHScncYS3h1E9PR5gDL7buJmcqIHrWyH6B5GZMgDrRg==
@@ -837,7 +837,7 @@
     "@babel/helper-create-regexp-features-plugin" "^7.12.13"
     "@babel/helper-plugin-utils" "^7.12.13"
 
-"@babel/preset-env@^7.13.5":
+"@babel/preset-env@^7.13.0":
   version "7.13.5"
   resolved "https://registry.yarnpkg.com/@babel/preset-env/-/preset-env-7.13.5.tgz#68b3bbc821a97fcdbf4bd0f6895b83d07f84f33e"
   integrity sha512-xUeKBIIcbwxGevyWMSWZOW98W1lp7toITvVsMxSddCEQy932yYiF4fCB+CG3E/MXzFX3KbefgvCqEQ7TDoE6UQ==
@@ -931,7 +931,7 @@
     "@babel/helper-validator-option" "^7.12.17"
     "@babel/plugin-transform-typescript" "^7.13.0"
 
-"@babel/runtime-corejs3@^7.13.6":
+"@babel/runtime-corejs3@^7.13.4":
   version "7.13.6"
   resolved "https://registry.yarnpkg.com/@babel/runtime-corejs3/-/runtime-corejs3-7.13.6.tgz#b7fea0fe5bb0ec92e78f2b5ed467a7bd30c53a84"
   integrity sha512-wSbWQEOD7tk8zjRJVy41L85v+ctDk6AIv72hzVOyOhAeRSkzxKhamBP2jLPBYLYvLNgiJqa4gnpiYAIeedf/sA==
@@ -1021,6 +1021,13 @@
   version "2.1.6"
   resolved "https://registry.yarnpkg.com/@hydrophobefireman/j-utils/-/j-utils-2.1.6.tgz#4ddf7e57d53ceae7245c7b907665f98f6f2f30f8"
   integrity sha512-gwcKHXTsos2KaQisSE/0QxaelhwHL+EnpcyBN9I9oDnQfhqj6D05XPlMGJIuuwn1jiWtd9z8C/bjefEuUQrNng==
+
+"@hydrophobefireman/module-nomodule@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@hydrophobefireman/module-nomodule/-/module-nomodule-1.0.2.tgz#06a0fe910f434d3fb15c30be581ba5765256a4a3"
+  integrity sha512-dCGyL47ddzk1oZD2lvnA6Lg6wNYgl4WX518sIvspetIsrwC3Mh0UY6rktwjpWicLIHO3sXQUGCwxVrh/1lfocw==
+  dependencies:
+    fs-extra "9.0.1"
 
 "@hydrophobefireman/qwc@^0.0.6":
   version "0.0.6"
@@ -5629,7 +5636,7 @@ type-is@~1.6.17, type-is@~1.6.18:
     media-typer "0.3.0"
     mime-types "~2.1.24"
 
-typescript@^4.2.2:
+typescript@^4.1.5:
   version "4.2.2"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.2.2.tgz#1450f020618f872db0ea17317d16d8da8ddb8c4c"
   integrity sha512-tbb+NVrLfnsJy3M59lsDgrzWIflR4d4TIUjz+heUnHZwdF7YsrMTKoRERiIvI2lvBG95dfpLxB21WZhys1bgaQ==
@@ -5906,13 +5913,6 @@ webpack-merge@^5.7.3:
     clone-deep "^4.0.1"
     wildcard "^2.0.0"
 
-webpack-module-nomodule-plugin@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/webpack-module-nomodule-plugin/-/webpack-module-nomodule-plugin-1.0.1.tgz#11b5eaf9d07775ad89762700ed62c3c61467971a"
-  integrity sha512-o1T/21yPRoYIWlCC7HkC7OOBd1uz8khRYNNrSh7Ew28w0ccwaNgLZd8jPSPMicpeJrvGntAcFZVPIS7ugotVaw==
-  dependencies:
-    fs-extra "9.0.1"
-
 webpack-sources@^1.1.0, webpack-sources@^1.4.3:
   version "1.4.3"
   resolved "https://registry.yarnpkg.com/webpack-sources/-/webpack-sources-1.4.3.tgz#eedd8ec0b928fbf1cbfe994e22d2d890f330a933"
@@ -5929,7 +5929,7 @@ webpack-sources@^2.1.1:
     source-list-map "^2.0.1"
     source-map "^0.6.1"
 
-webpack@^5.24.1:
+webpack@^5.24.0:
   version "5.24.1"
   resolved "https://registry.yarnpkg.com/webpack/-/webpack-5.24.1.tgz#6b7730bfba1ee94b05d05ef7c32743a35105a744"
   integrity sha512-eg+6OIt6npUSwbhRQY6XffAixEUSARBf+WAWOxrZwOB4jRbbpMXlridFy/Yt7N0U20Ry1vp/nnDbtN7l1rUdIA==
