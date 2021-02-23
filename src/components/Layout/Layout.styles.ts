@@ -1,6 +1,6 @@
 import { css } from "catom";
 
-export const logoutCss = css({
+export const headerActionButtonCss = css({
   background: "var(--current-bg)",
   border: "2px solid var(--current-fg)",
   color: "var(--current-text-color)",
@@ -11,4 +11,6 @@ export const logoutCss = css({
   paddingBottom: ".5rem",
   display: "flex",
   alignItems: "center",
+  marginLeft: "5px",
+  marginRight: "5px",
 });

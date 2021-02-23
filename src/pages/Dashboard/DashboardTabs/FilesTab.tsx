@@ -8,7 +8,7 @@ import {
   getFileName,
   getFileType,
   upload,
-} from "../../../components/FileInfo/FileUtil";
+} from "../../../util/fileUtil";
 import {
   FileTabLoader,
   NoFilesFound,

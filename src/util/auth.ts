@@ -7,7 +7,7 @@ import {
   didFetch,
   files,
 } from "../state";
-import { get, set, subscribe } from "statedrive";
+import { get, set } from "statedrive";
 
 import { clear } from "./idb";
 import { redirect } from "@hydrophobefireman/ui-lib";

@@ -1,15 +1,62 @@
-import * as requests from "../../util/http/requests";
+import * as requests from "./http/requests";
 
-import { FileData, files } from "../../state";
-import { dec, enc } from "../../crypto/util";
-import { fileRoutes, userRoutes } from "../../util/http/api_routes";
+import { FileData, files } from "../state";
+import { dec, enc } from "../crypto/util";
+import { encrypt, encryptJson } from "../crypto/encrypt";
+import { fileRoutes, userRoutes } from "./http/api_routes";
 
 import { FakeWeakMap } from "@hydrophobefireman/j-utils";
-import { TabProps } from "../../pages/Dashboard/types";
-import { encrypt } from "../../crypto/encrypt";
-import { fileCard } from "../../pages/Dashboard/DashboardTabs/DashboadTabs.style";
-import { getArrayBufferFromUser } from "../../util/file";
+import { TabProps } from "../pages/Dashboard/types";
+import { fileCard } from "../pages/Dashboard/DashboardTabs/DashboadTabs.style";
+import { getArrayBufferFromUser } from "./bufUtil";
 import { set } from "statedrive";
+
+export async function uploadNoteToServer({
+  notes,
+  password,
+  title,
+  url,
+}: {
+  notes: string;
+  password: string;
+  title: string;
+  url: string;
+}) {
+  const preview = (notes || "").substr(0, 25);
+  const func = enc(password);
+  const encData = await encryptJson({ note: notes }, password, {
+    title: func(title),
+    preview: func(preview),
+    ts: func(+new Date() + ""),
+    type: func("x-collegewarden/note"),
+  });
+  const { encryptedBuf, meta } = encData;
+  const { result } = requests.postBinary(url, encryptedBuf, {
+    "x-cw-iv": meta,
+    "x-cw-data-type": "encrypted_blob",
+  });
+  return result;
+}
+export async function uploadFileToServer(
+  { buf, name, type }: { buf: ArrayBuffer; name: string; type: string },
+  password: string,
+  url: string
+) {
+  const fn = enc(password);
+  const { encryptedBuf, meta } = await encrypt(buf, password, {
+    name: fn(name),
+    type: fn(type),
+  });
+  const res = requests.postBinary(url, encryptedBuf, {
+    "x-cw-iv": meta,
+    "x-cw-data-type": "encrypted_blob",
+  }).result;
+
+  return res.then((x: any) => {
+    x.name = name;
+    return x as any;
+  });
+}
 
 export async function upload(
   password: string,
@@ -17,22 +64,7 @@ export async function upload(
 ): Promise<{ data: unknown; error?: string; name: string }[]> {
   const data = await getArrayBufferFromUser(fileData);
   return Promise.all(
-    data.map(async ({ buf, name, type }) => {
-      const fn = enc(password);
-      const { encryptedBuf, meta } = await encrypt(buf, password, {
-        name: fn(name),
-        type: fn(type),
-      });
-      const res = requests.postBinary(fileRoutes.upload, encryptedBuf, {
-        "x-cw-iv": meta,
-        "x-cw-data-type": "encrypted_blob",
-      }).result;
-
-      return res.then((x: any) => {
-        x.name = name;
-        return x as any;
-      });
-    })
+    data.map((x) => uploadFileToServer(x, password, fileRoutes.upload))
   ).then((x) => {
     getFileList();
     return x;
@@ -112,7 +144,7 @@ export function deleteFile(f: FileData, fList: FileData[]) {
 }
 
 export function getFileList(setMessage?: TabProps["setMessage"]) {
-  requests
+  return requests
     .get<{ files: FileData[] }>(userRoutes.getFiles())
     .result.then((f) => {
       if (f.error) {

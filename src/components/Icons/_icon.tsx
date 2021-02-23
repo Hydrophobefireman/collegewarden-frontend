@@ -1,4 +1,4 @@
-import { ComponentChild, ComponentType } from "@hydrophobefireman/ui-lib";
+import { ComponentChild } from "@hydrophobefireman/ui-lib";
 import { IconProps } from "./types";
 
 export function _icon(
@@ -7,7 +7,7 @@ export function _icon(
 ): (p: IconProps) => JSX.Element {
   return function ({ size: _size, className, invert }: IconProps) {
     const size = _size || 30;
-    const prp = invert
+    const prop = invert
       ? { stroke: "var(--current-bg)", fill: "var(--current-fg)" }
       : { fill: "var(--current-bg)", stroke: "var(--current-fg)" };
     return (
@@ -17,7 +17,7 @@ export function _icon(
         width={size}
         class={className}
         viewBox={viewBox}
-        {...prp}
+        {...prop}
       >
         {path}
       </svg>

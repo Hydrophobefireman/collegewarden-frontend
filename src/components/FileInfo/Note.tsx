@@ -1,6 +1,7 @@
-import { fileCard } from "../../pages/Dashboard/DashboardTabs/DashboadTabs.style";
+import { FileEntryProps, getDecryptedFileProp } from "../../util/fileUtil";
+
 import { bold } from "../../styles";
-import { FileEntryProps, getDecryptedFileProp } from "./FileUtil";
+import { fileCard } from "../../pages/Dashboard/DashboardTabs/DashboadTabs.style";
 export function Note({ data, password, open }: FileEntryProps) {
   const title = data && getDecryptedFileProp(data, password, "title");
   return (

@@ -12,6 +12,7 @@ export const userRoutes = {
   checkAuth: absoluteURL("/accounts/whoami"),
   getFiles: () => absoluteURL(`/accounts/${get(authData).user}/files`),
   interact: absoluteURL("/_interact"),
+  changePassword: absoluteURL("/accounts/password/new/"),
 };
 
 export const fileRoutes = {

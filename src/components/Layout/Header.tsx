@@ -1,21 +1,18 @@
-import Component, { useEffect } from "@hydrophobefireman/ui-lib";
-import { UserData, authData } from "../../state";
 import { bold, hoverable } from "../../styles";
-import {
-  subscribe,
-  unsubscribe,
-  useSetSharedState,
-  useSharedStateValue,
-} from "statedrive";
 
+import { A } from "@hydrophobefireman/ui-lib";
+import { LockIcon } from "../Icons/Lock";
 import { LogoutIcon } from "../Icons/Logout";
 import { auth } from "../../util/auth";
+import { authData } from "../../state";
 import { css } from "catom";
-import { logoutCss } from "./Layout.styles";
+import { headerActionButtonCss } from "./Layout.styles";
+import { useLocation } from "../../customHooks";
+import { useSharedStateValue } from "statedrive";
 
 export function Header() {
   const data = useSharedStateValue(authData);
-
+  const loc = useLocation();
   return (
     <header
       class={css({
@@ -31,10 +28,22 @@ export function Header() {
           <div>
             Hi, <span class={bold}>{data.name}</span>
           </div>
-          <button class={[logoutCss, hoverable]} onClick={() => auth.logout()}>
-            <LogoutIcon size={"1.2rem"} />
-            logout
-          </button>
+          <div class={css({ display: "flex", justifyContent: "space-evenly" })}>
+            {loc !== "/security" && (
+              <A href="/security" class={css({ textDecoration: "none" })}>
+                <button class={[hoverable, headerActionButtonCss]}>
+                  <LockIcon size="1.2rem" /> Security
+                </button>
+              </A>
+            )}
+            <button
+              class={[headerActionButtonCss, hoverable]}
+              onClick={() => auth.logout()}
+            >
+              <LogoutIcon size={"1.2rem"} />
+              logout
+            </button>
+          </div>
         </>
       )}
     </header>

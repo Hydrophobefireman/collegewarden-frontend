@@ -1,6 +1,6 @@
 import * as requests from "../../util/http/requests";
 
-import { UserDataResponse, authData } from "../../state";
+import { UserDataResponse, authData, passwordData } from "../../state";
 
 import { AsyncComponent } from "@hydrophobefireman/ui-lib";
 import { ChunkLoading } from "../ChunkLoadingComponent";
@@ -8,6 +8,7 @@ import { Header } from "./Header";
 import { RouteLoader } from "../RouteLoader";
 import { ThemeSwitcher } from "../ThemeSwitcher";
 import { center } from "../../styles";
+import { get as idbGet } from "../../util/idb";
 import { set } from "statedrive";
 import { userRoutes } from "../../util/http/api_routes";
 
@@ -45,6 +46,9 @@ export function Init() {
 }
 
 function initPromise() {
+  idbGet("auth.user-saved.password").then((x) => {
+    if (x) set(passwordData, x);
+  });
   return requests
     .get<UserDataResponse>(userRoutes.checkAuth)
     .result.then((resp) => {

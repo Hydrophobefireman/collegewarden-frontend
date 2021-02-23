@@ -2,16 +2,13 @@ import * as requests from "../../util/http/requests";
 
 import { FileData, files } from "../../state";
 import {
-  closeButton,
-  inlineContainer,
-  notesArea,
-} from "../UniEdit/UniEdit.styles";
-import {
   deleteFile,
   evictWeakMapCache,
   getDecryptedFileProp,
   getFileList,
-} from "../FileInfo/FileUtil";
+  uploadNoteToServer,
+} from "../../util/fileUtil";
+import { inlineContainer, notesArea } from "../UniEdit/UniEdit.styles";
 import { useEffect, useState } from "@hydrophobefireman/ui-lib";
 
 import { AnimatedInput } from "../AnimatedInput";
@@ -21,8 +18,6 @@ import { ModalLayout } from "../Layout/ModalLayout";
 import { actionButton } from "../../styles";
 import { css } from "catom";
 import { decryptJson } from "../../crypto/decrypt";
-import { enc } from "../../crypto/util";
-import { encryptJson } from "../../crypto/encrypt";
 import { fileRoutes } from "../../util/http/api_routes";
 import { guard } from "../../util/guard";
 import { set } from "statedrive";
@@ -101,24 +96,13 @@ export function NoteEditor({
     if (loading) return;
     setLoading(true);
     setMessage({ message: "Uploading note" });
-    const preview = (notes || "").substr(0, 25);
-    const func = enc(password);
-    const encData = await encryptJson({ note: notes }, password, {
-      title: func(title),
-      preview: func(preview),
-      ts: func(+new Date() + ""),
-      type: func("x-collegewarden/note"),
+    const res = await uploadNoteToServer({
+      notes,
+      password,
+      title,
+      url: data ? fileRoutes.edit(data.file_id) : fileRoutes.upload,
     });
-    const { encryptedBuf, meta } = encData;
-    const { result } = requests.postBinary(
-      data ? fileRoutes.edit(data.file_id) : fileRoutes.upload,
-      encryptedBuf,
-      {
-        "x-cw-iv": meta,
-        "x-cw-data-type": "encrypted_blob",
-      }
-    );
-    const res = await result;
+
     setLoading(false);
     setMessage({
       message: res.error || "upload successful",
@@ -145,13 +129,6 @@ export function NoteEditor({
         <div>uploading....</div>
       ) : (
         <>
-          <button
-            onClick={close}
-            class={[actionButton, closeButton]}
-            style={{ fontSize: "2rem", fontWeight: "normal" }}
-          >
-            ✖
-          </button>
           <section>
             <div>
               <b

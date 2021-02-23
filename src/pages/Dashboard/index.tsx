@@ -26,7 +26,7 @@ import { Search } from "./DashboardTabs/SearchTab";
 import { SnackBar } from "../../components/SnackBar";
 import { dashboardDataSection } from "./Dashboard.styles";
 import { decryptJson } from "../../crypto/decrypt";
-import { evictWeakMapCache } from "../../components/FileInfo/FileUtil";
+import { evictWeakMapCache } from "../../util/fileUtil";
 import { fileRoutes } from "../../util/http/api_routes";
 import { validateCollegeDataWithNewApi } from "./_api2";
 

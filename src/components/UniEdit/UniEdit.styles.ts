@@ -1,5 +1,6 @@
-import { css } from "catom";
 import { actionButton, bold } from "../../styles";
+
+import { css } from "catom";
 
 export const activeAction = {
   color: "var(--current-bg)",
@@ -54,9 +55,3 @@ export const modalActionButton = [
 ];
 
 export const modalActionText = css({ marginLeft: "0.5rem" });
-
-export const closeButton = css({
-  position: "absolute",
-  right: "0",
-  top: "0",
-});

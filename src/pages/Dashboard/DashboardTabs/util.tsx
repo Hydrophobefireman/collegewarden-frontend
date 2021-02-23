@@ -4,7 +4,7 @@ import {
   getDecryptedFileProp,
   getFileName,
   getFileType,
-} from "../../../components/FileInfo/FileUtil";
+} from "../../../util/fileUtil";
 
 import { FileData } from "../../../state";
 import { RefType } from "@hydrophobefireman/ui-lib";

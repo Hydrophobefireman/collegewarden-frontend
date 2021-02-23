@@ -1,14 +1,13 @@
 import { CollegeData, colleges } from "../../state";
 import { actionButton, bold, center } from "../../styles";
+import { get, set } from "statedrive";
 import {
-  closeButton,
   marginTop,
   modalActionButton,
   modalActionText,
   modalCollegeName,
   modalSection,
 } from "./UniEdit.styles";
-import { get, set } from "statedrive";
 
 import { AnimatedInput } from "../AnimatedInput";
 import { BooleanInfo } from "./BooleanProps";
@@ -102,13 +101,6 @@ export function EditStage({
   }
   return (
     <ModalLayout close={close}>
-      <button
-        onClick={close}
-        class={[actionButton, closeButton]}
-        style={{ fontSize: "2rem", fontWeight: "normal" }}
-      >
-        ✖
-      </button>
       <div>
         <b class={modalCollegeName}>{glCollegeData.name}</b>
         <section class={modalSection}>

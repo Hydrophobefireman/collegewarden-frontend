@@ -1,8 +1,15 @@
+import { actionButton, mask, modal } from "../../styles";
+
 import { css } from "catom";
-import { mask, modal } from "../../styles";
+
+const closeButton = css({
+  position: "absolute",
+  right: "0",
+  top: "0",
+});
 
 export function ModalLayout(props?: {
-  close?(e?: MouseEvent): void;
+  close: (e?: MouseEvent) => void | null;
   children?: any;
 }) {
   return (
@@ -13,7 +20,18 @@ export function ModalLayout(props?: {
       }
     >
       <div class={modal}>
-        <div class={css({ maxHeight: "80vh" })}>{props.children}</div>
+        <div class={css({ maxHeight: "80vh" })}>
+          {props.close && (
+            <button
+              onClick={props.close}
+              class={[actionButton, closeButton]}
+              style={{ fontSize: "2rem", fontWeight: "normal" }}
+            >
+              ✖
+            </button>
+          )}
+          {props.children}
+        </div>
       </div>
     </section>
   );

@@ -9,7 +9,6 @@ import {
 
 import { ChunkLoading } from "../ChunkLoadingComponent";
 import { NotFound } from "../../pages/404";
-import { css } from "catom";
 import { Object_entries as entries } from "@hydrophobefireman/j-utils";
 
 const getDefault: <T>(mod: { default: T }) => T = (mod) => mod.default;
@@ -22,6 +21,7 @@ const componentMap = {
   "/login": () => import("../../pages/Login").then(getDefault),
   "/dashboard": dashboardRoute,
   "/dashboard/:tab": dashboardRoute,
+  "/security": () => import("../../pages/Security").then(getDefault),
 };
 
 export function RouteLoader() {

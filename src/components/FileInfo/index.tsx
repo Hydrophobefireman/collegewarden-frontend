@@ -1,12 +1,13 @@
 import { useEffect, useRef } from "@hydrophobefireman/ui-lib";
-import { css } from "catom";
+
 import { DeleteIcon } from "../Icons/Delete";
 import { ExternalLinkIcon } from "../Icons/ExternalLink";
-import { ModalLayout } from "../Layout/ModalLayout";
 import { FileData } from "../../state";
+import { ModalLayout } from "../Layout/ModalLayout";
 import { actionButton } from "../../styles";
 import { actionButtonOverride } from "../../pages/Dashboard/DashboardTabs/DashboadTabs.style";
-import { getFileName } from "./FileUtil";
+import { css } from "catom";
+import { getFileName } from "../../util/fileUtil";
 
 interface FileInfoProps {
   openFile: FileData;

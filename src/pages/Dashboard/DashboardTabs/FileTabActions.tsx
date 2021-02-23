@@ -3,7 +3,7 @@ import { actionButton, center, mask } from "../../../styles";
 import { NotesIcon } from "../../../components/Icons/Notes";
 import { UploadIcon } from "../../../components/Icons/Upload";
 import { css } from "catom";
-import { upload } from "../../../components/FileInfo/FileUtil";
+import { upload } from "../../../util/fileUtil";
 
 const uploadButtonOverride = {
   display: "inline-flex",
