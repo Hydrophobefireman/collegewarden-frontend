@@ -4,7 +4,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const autoPrefixPlugin = require("autoprefixer");
 const HTMLInlineCSSWebpackPlugin = require("html-inline-css-webpack-plugin")
   .default;
-const WebpackModuleNoModulePlugin = require("webpack-module-nomodule-plugin");
+const WebpackModuleNoModulePlugin = require("@hydrophobefireman/module-nomodule");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const cfg = require("./.babelrc");
 const { autoPrefixCSS } = require("catom/css");
