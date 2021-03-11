@@ -9,6 +9,8 @@
     "rootDir": "./",
     "baseUrl": ".",
     "jsx": "preserve",
+    "resolveJsonModule": true,
+
     "paths": { "@/*": ["./src/*"] }
   },
   "exclude": [".babelconfig.js", "webpack.config.js", "./scripts/"]
