@@ -1,3 +1,4 @@
+const path = require("path");
 const TerserWebpackPlugin = require("terser-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -6,15 +7,20 @@ const HTMLInlineCSSWebpackPlugin = require("html-inline-css-webpack-plugin")
   .default;
 const WebpackModuleNoModulePlugin = require("@hydrophobefireman/module-nomodule");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
-const cfg = require("./.babelrc");
-const { autoPrefixCSS } = require("catom/css");
-
+const { autoPrefixCSS } = require("catom/dist/css");
+const babel = require("./.babelconfig");
+const uiConfig = require("./ui.config.json");
 const mode = process.env.NODE_ENV;
-
 const isProd = mode === "production";
+
+const { outputDir, staticFilePrefix, inlineCSS, enableCatom } = uiConfig;
 
 function prodOrDev(a, b) {
   return isProd ? a : b;
+}
+
+function srcPath(subdir) {
+  return path.join(__dirname, subdir);
 }
 
 const jsLoaderOptions = (isLegacy) => ({
@@ -22,7 +28,7 @@ const jsLoaderOptions = (isLegacy) => ({
   exclude: /(node_modules\/(?!(@hydrophobefireman|statedrive)))|(injectables)/,
   use: {
     loader: "babel-loader",
-    options: cfg.env[isLegacy ? "legacy" : "modern"],
+    options: babel.env[isLegacy ? "legacy" : "modern"],
   },
 });
 const cssLoaderOptions = {
@@ -42,8 +48,11 @@ const cssLoaderOptions = {
 };
 const contentLoaderOptions = {
   test: /\.(png|jpg|gif|ico|svg)$/,
-  use: [{ loader: "url-loader", options: { fallback: "file-loader" } }],
+  use: uiConfig.preferBase64Images
+    ? [{ loader: "url-loader", options: { fallback: "file-loader" } }]
+    : [{ loader: "file-loader" }],
 };
+
 function getEnvObject(isLegacy) {
   const prod = !isLegacy;
   return {
@@ -57,12 +66,17 @@ function getEnvObject(isLegacy) {
 }
 function getCfg(isLegacy) {
   return {
-    cache: {
-      type: "memory",
-    },
+    cache: enableCatom
+      ? { type: "memory" }
+      : {
+          type: "filesystem",
+          buildDependencies: {
+            config: [__filename],
+          },
+        },
     devServer: {
-      contentBase: `${__dirname}/docs`,
-      compress: !0,
+      contentBase: `${__dirname}/${outputDir}`,
+      compress: true,
       port: 4200,
       historyApiFallback: true,
     },
@@ -76,10 +90,15 @@ function getCfg(isLegacy) {
     entry: `${__dirname}/src/App.tsx`,
     output: {
       environment: getEnvObject(isLegacy),
-      path: `${__dirname}/docs/`,
-      filename: `${isLegacy ? "legacy" : "es6"}/[name]-[chunkhash].js`,
+      path: `${__dirname}/${outputDir}/`,
+      filename: `${staticFilePrefix}/${
+        isLegacy ? "legacy" : "es6"
+      }/[name]-[chunkhash].js`,
     },
-    resolve: { extensions: [".ts", ".tsx", ".js", ".json"] },
+    resolve: {
+      extensions: [".ts", ".tsx", ".js", ".json"],
+      alias: { "@": srcPath("src") },
+    },
     mode,
     optimization: {
       concatenateModules: false,
@@ -97,8 +116,12 @@ function getCfg(isLegacy) {
           tags,
           options
         ) {
-          let css = "";
-          css = await autoPrefixCSS();
+          let css = uiConfig.enableCatom
+            ? `<style>
+                ${await autoPrefixCSS()}
+               </style>
+          `
+            : "";
           return {
             compilation,
             webpackConfig: compilation.options,
@@ -113,27 +136,28 @@ function getCfg(isLegacy) {
         },
         inject: "body",
         template: `${__dirname}/index.html`,
-        xhtml: !0,
+        xhtml: true,
         favicon: "./favicon.ico",
         minify: prodOrDev(
           {
-            collapseBooleanAttributes: !0,
-            collapseWhitespace: !0,
-            html5: !0,
-            minifyCSS: !0,
-            removeEmptyAttributes: !0,
-            removeRedundantAttributes: !0,
+            collapseBooleanAttributes: true,
+            collapseWhitespace: true,
+            html5: true,
+            minifyCSS: true,
+            removeEmptyAttributes: true,
+            removeRedundantAttributes: true,
+            removeComments: true,
           },
           !1
         ),
       }),
-      new MiniCssExtractPlugin({}),
+      new MiniCssExtractPlugin({ filename: `${staticFilePrefix}/main.css` }),
       isProd &&
         new OptimizeCSSAssetsPlugin({ cssProcessor: require("cssnano") }),
-      isProd && new HTMLInlineCSSWebpackPlugin({}),
+      isProd && inlineCSS && new HTMLInlineCSSWebpackPlugin({}),
       new WebpackModuleNoModulePlugin(isLegacy ? "legacy" : "modern"),
     ].filter(Boolean),
   };
 }
 
-module.exports = isProd ? [getCfg(true), getCfg(false)] : getCfg(false);
+module.exports = isProd ? [getCfg(false), getCfg(true)] : getCfg(false);

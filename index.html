@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-   <head>
+  <head>
     <link rel="preconnect" href="https://fonts.pycode.tk" crossorigin />
     <link rel="preload" href="https://fonts.pycode.tk/poppins.css" as="style" />
     <link
@@ -17,12 +17,9 @@
       content="College warden allows you to manage links to your college portals, other resources as well as documents in a secure manner"
     />
     <base href="/" />
-    <style>
-      <%= htmlWebpackPlugin.options.css %>
-      /**
-      global css
-      */
-    </style>
+
+    <%= htmlWebpackPlugin.options.css %>
+
     <script data-js="touch-intent-css-fix">
       /iPhone|iPod|iPad/.test(navigator.platform) &&
         (document.head.appendChild(document.createElement("style")).innerText =

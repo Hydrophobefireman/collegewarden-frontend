@@ -1,0 +1,7 @@
+{
+  "enableCatom": true,
+  "inlineCSS": true,
+  "preferBase64Images": true,
+  "outputDir": "docs",
+  "staticFilePrefix": "static/ui"
+}

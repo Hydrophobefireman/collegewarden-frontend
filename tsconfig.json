@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "module": "ESNext",
+    "allowJs": true,
     "alwaysStrict": true,
     "declaration": true,
     "moduleResolution": "Node",
@@ -8,6 +9,7 @@
     "rootDir": "./",
     "baseUrl": ".",
     "jsx": "preserve",
-    "resolveJsonModule": true
-  }
+    "paths": { "@/*": ["./src/*"] }
+  },
+  "exclude": [".babelconfig.js", "webpack.config.js", "./scripts/"]
 }
