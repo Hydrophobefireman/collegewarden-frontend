@@ -103,6 +103,7 @@ export function MyColleges({ data: _data }: Props) {
       notApplied.push(x);
       return;
     }
+
     map[fixAccepted(x.accepted) as CollegeData["accepted"]].push(x);
   });
   function handleSortClick(e: JSX.TargetedMouseEvent<HTMLButtonElement>) {
