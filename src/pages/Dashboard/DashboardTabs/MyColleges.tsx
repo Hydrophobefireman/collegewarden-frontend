@@ -150,7 +150,7 @@ export function MyColleges({ data: _data }: Props) {
           marginTop: "1.2rem",
           position: "sticky",
           top: 0,
-          zIndex: 1000,
+          zIndex: 2,
           background: "var(--current-bg)",
         })}
       >

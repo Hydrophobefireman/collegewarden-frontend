@@ -40,7 +40,7 @@ export function CollegeCard({ data, setCollege }: CollegeCardProps) {
         <div class={collegeName}>{data.data.name}</div>
       </div>
       <div class={infoWrap}>
-        {data.accepted !== "Accepted" && (
+        {data.accepted !== "Accepted" && (data.accepted as any) !== true && (
           <>
             <Info
               title="decision timeline"
