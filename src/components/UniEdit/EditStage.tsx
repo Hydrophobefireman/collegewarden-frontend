@@ -21,6 +21,8 @@ import { StageProps } from "./util";
 import { TimeLine } from "./TimeLine";
 import { css } from "catom";
 import { useState } from "@hydrophobefireman/ui-lib";
+import { AppStatus } from "./AppStatus";
+import { fixAccepted } from "@/util/fixAccepted";
 
 function boolOrDefault<T>(x: any, def: T) {
   return x == null ? def : x;
@@ -40,9 +42,7 @@ export function EditStage({
     currData.decisionTimeline || "RD"
   );
   const [applied, setApplied] = useState(boolOrDefault(currData.applied, true));
-  const [accepted, setAccepted] = useState(
-    boolOrDefault(currData.accepted, false)
-  );
+  const [accepted, setAccepted] = useState(fixAccepted(currData.accepted));
   const [finAid, setFinAid] = useState(
     boolOrDefault(currData.appliedWithFinAid, false)
   );
@@ -135,11 +135,8 @@ export function EditStage({
               />
             </div>
             <TimeLine timeline={timeline} setTimeline={setTimeline} />
-            <BooleanInfo
-              value={accepted}
-              setValue={setAccepted}
-              text="have you been accepted yet?"
-            />
+
+            <AppStatus status={accepted} setStatus={setAccepted} />
             <BooleanInfo
               value={applied}
               setValue={setApplied}

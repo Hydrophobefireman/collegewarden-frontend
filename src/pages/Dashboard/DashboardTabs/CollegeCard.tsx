@@ -9,7 +9,7 @@ import {
   uniName,
   viewMoreWrapper,
 } from "./DashboadTabs.style";
-
+import { AnimateLayout } from "@hydrophobefireman/ui-anim";
 import { CollegeData } from "../../../state";
 import { EditIcon } from "../../../components/Icons/Edit";
 import { ExternalLinkIcon } from "../../..//components/Icons/ExternalLink";
@@ -27,7 +27,7 @@ export function CollegeCard({ data, setCollege }: CollegeCardProps) {
   const func = () => setCollege(data);
 
   return (
-    <div class={uniCard}>
+    <AnimateLayout element="div" animId={data.data.name} class={uniCard}>
       <div
         class={[
           isEd(data) ? css({ color: "var(--current-fg)" }) : null,
@@ -40,7 +40,7 @@ export function CollegeCard({ data, setCollege }: CollegeCardProps) {
         <div class={collegeName}>{data.data.name}</div>
       </div>
       <div class={infoWrap}>
-        {!data.accepted && (
+        {data.accepted !== "Accepted" && (
           <>
             <Info
               title="decision timeline"
@@ -83,7 +83,7 @@ export function CollegeCard({ data, setCollege }: CollegeCardProps) {
           </button>
         </div>
       </div>
-    </div>
+    </AnimateLayout>
   );
 }
 

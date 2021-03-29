@@ -23,7 +23,7 @@ export interface CollegeData {
   appliedWithFinAid?: boolean;
   notes?: string;
   data: GlCollegeData;
-  accepted?: boolean;
+  accepted?: "Accepted" | "Rejected" | "Waitlisted" | "Pending";
 }
 
 export interface UserDataResponse {

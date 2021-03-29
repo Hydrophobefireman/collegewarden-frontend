@@ -55,3 +55,8 @@ export const modalActionButton = [
 ];
 
 export const modalActionText = css({ marginLeft: "0.5rem" });
+
+export const appStatusBox = css({
+  display: "grid",
+  gridTemplateColumns: "1fr 1fr",
+});

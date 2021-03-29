@@ -1,11 +1,11 @@
 import "./App.css";
 import "./themes.css";
-import "./crypto/re-encrypt";
 
 import { Init } from "./components/Layout";
 import { init } from "@hydrophobefireman/qwc";
 import { render } from "@hydrophobefireman/ui-lib";
 import { syncOnStateUpdates } from "./syncData";
+import { Motion } from "@hydrophobefireman/ui-anim";
 init({
   "loading-spinner": {
     observedAttributes: [
@@ -25,4 +25,9 @@ function App() {
   return <Init />;
 }
 
-render(<App />, document.getElementById("app-mount"));
+render(
+  <Motion>
+    <App />
+  </Motion>,
+  document.getElementById("app-mount")
+);

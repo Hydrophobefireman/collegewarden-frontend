@@ -84,6 +84,7 @@ export const uniCard = css({
   transition: "0.3s linear",
   display: "flex",
   flexDirection: "column",
+  background: "var(--current-bg)",
 });
 export const fileCard = css({
   width: "200px",
@@ -138,6 +139,10 @@ export const clgHeading = [
 ];
 
 export const acceptedCss = `${clgHeading} ${css({ color: "#00e400" })}`;
+
+export const rejectedCss = `${clgHeading} ${css({ color: "red" })}`;
+
+export const waitlistCss = `${clgHeading} ${css({ color: "yellow" })}`;
 
 export const appliedCss = `${clgHeading} ${css({
   color: "var(--current-fg)",

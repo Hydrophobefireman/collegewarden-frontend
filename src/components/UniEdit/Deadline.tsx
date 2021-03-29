@@ -29,5 +29,7 @@ export function Deadline({
   );
 }
 export function dateTimeLocalCompat(d: Date): string {
-  return d.toISOString().split(":").slice(0, -1).join(":");
+  return new Date(d.getTime() + new Date().getTimezoneOffset() * -60 * 1000)
+    .toISOString()
+    .slice(0, 19);
 }

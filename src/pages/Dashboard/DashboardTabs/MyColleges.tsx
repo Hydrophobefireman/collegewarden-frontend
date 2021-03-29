@@ -5,6 +5,8 @@ import {
   appliedCss,
   cardWrapper,
   clgHeading,
+  rejectedCss,
+  waitlistCss,
 } from "./DashboadTabs.style";
 import { useEffect, useMemo, useState } from "@hydrophobefireman/ui-lib";
 
@@ -12,14 +14,19 @@ import { AnimatedInput } from "../../../components/AnimatedInput";
 import { CollegeCard } from "./CollegeCard";
 import { EditStage } from "../../../components/UniEdit/EditStage";
 import { css } from "catom";
-import { heading } from "../../../styles";
+import { actionButton, heading } from "../../../styles";
 import { useSharedState } from "statedrive";
+import { fixAccepted } from "@/util/fixAccepted";
 
 interface Props {
   data: CollegeData[];
 }
+const activeActionButton = {
+  color: "var(--current-bg)",
+  background: "var(--current-fg)",
+};
 
-function defaultSort(a: CollegeData, b: CollegeData): number {
+function decisionDateSort(a: CollegeData, b: CollegeData): number {
   const timelineA = a.decisionTimeline;
   const timelineB = b.decisionTimeline;
   if (timelineA === "ED" && timelineB !== "ED") return -1;
@@ -38,16 +45,23 @@ function defaultSort(a: CollegeData, b: CollegeData): number {
     (nameA > nameB ? 1 : nameB > nameA ? -1 : 0)
   );
 }
+function nameSort(a: CollegeData, b: CollegeData): number {
+  const nameA = a.data.name;
+  const nameB = b.data.name;
+  return nameA > nameB ? 1 : nameB > nameA ? -1 : 0;
+}
 
 export function MyColleges({ data: _data }: Props) {
   const [college, setCollege] = useState<CollegeData>(null);
   const [cData, setCollegeData] = useSharedState(colleges);
   const [filtered, setFiltered] = useState(_data);
+  const [sort, setSort] = useState<"decision-date" | "name">("decision-date");
 
+  const sortFn = sort === "decision-date" ? decisionDateSort : nameSort;
   const [search, setSearch] = useState("");
   const data = useMemo(
-    () => (filtered ? filtered.slice().sort(defaultSort) : null),
-    [filtered]
+    () => (filtered ? filtered.slice().sort(sortFn) : null),
+    [filtered, sortFn]
   );
   useEffect(() => {
     setFiltered(_data);
@@ -74,18 +88,26 @@ export function MyColleges({ data: _data }: Props) {
   }
   if (!data) return;
   const accepted = [];
+  const waitlisted = [];
+  const rejected = [];
   const notApplied = [];
-  const alreadyApplied = data.filter((x) => {
-    if (x.accepted) {
-      accepted.push(x);
-      return false;
-    }
+  const alreadyApplied = [];
+  const map: Record<CollegeData["accepted"], Array<CollegeData>> = {
+    Accepted: accepted,
+    Waitlisted: waitlisted,
+    Rejected: rejected,
+    Pending: alreadyApplied,
+  };
+  data.forEach((x) => {
     if (!x.applied) {
       notApplied.push(x);
-      return false;
+      return;
     }
-    return true;
+    map[fixAccepted(x.accepted) as CollegeData["accepted"]].push(x);
   });
+  function handleSortClick(e: JSX.TargetedMouseEvent<HTMLButtonElement>) {
+    setSort(e.currentTarget.dataset.sort as any);
+  }
   return (
     <section>
       {college && (
@@ -115,12 +137,46 @@ export function MyColleges({ data: _data }: Props) {
         </span>
         <span class={css({ fontSize: "1.5rem" })}>({data.length})</span>
       </div>
-      <section>
+      <div>
         <AnimatedInput
           value={search}
           onInput={onInput}
           labelText="Search college"
         />
+      </div>
+      <div
+        class={css({
+          marginLeft: "1.2rem",
+          marginTop: "1.2rem",
+          position: "sticky",
+          top: 0,
+          zIndex: 1000,
+          background: "var(--current-bg)",
+        })}
+      >
+        <span class={css({ fontWeight: "bold", fontSize: "1.2rem" })}>
+          Sort Colleges by:
+        </span>
+        <div>
+          <button
+            onClick={handleSortClick}
+            data-sort="decision-date"
+            class={actionButton}
+            style={sort === "decision-date" ? activeActionButton : null}
+          >
+            Decision Date
+          </button>
+          <button
+            onClick={handleSortClick}
+            data-sort="name"
+            class={actionButton}
+            style={sort === "name" ? activeActionButton : null}
+          >
+            Name
+          </button>
+        </div>
+      </div>
+      <section>
         <CollegeSortType
           arr={accepted}
           cls={acceptedCss}
@@ -141,6 +197,20 @@ export function MyColleges({ data: _data }: Props) {
           setCollege={setCollege}
           text="Applied"
           infoCls={css({ color: "var(--current-fg)" })}
+        />
+        <CollegeSortType
+          arr={waitlisted}
+          cls={waitlistCss}
+          setCollege={setCollege}
+          text="Waitlisted"
+          infoCls={css({ color: "yellow" })}
+        />
+        <CollegeSortType
+          arr={rejected}
+          cls={rejectedCss}
+          setCollege={setCollege}
+          text="Rejected"
+          infoCls={css({ color: "red" })}
         />
       </section>
     </section>
