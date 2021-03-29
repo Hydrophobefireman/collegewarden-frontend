@@ -42,7 +42,9 @@ export function EditStage({
     currData.decisionTimeline || "RD"
   );
   const [applied, setApplied] = useState(boolOrDefault(currData.applied, true));
-  const [accepted, setAccepted] = useState(fixAccepted(currData.accepted));
+  const [accepted, setAccepted] = useState<CollegeData["accepted"]>(
+    fixAccepted(currData.accepted) as any
+  );
   const [finAid, setFinAid] = useState(
     boolOrDefault(currData.appliedWithFinAid, false)
   );

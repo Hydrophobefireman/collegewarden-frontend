@@ -18,6 +18,7 @@
   "dependencies": {
     "@hydrophobefireman/j-utils": "^2.1.6",
     "@hydrophobefireman/qwc": "^0.0.6",
+    "@hydrophobefireman/ui-anim": "^0.0.1",
     "@hydrophobefireman/ui-lib": "^1.8.7",
     "statedrive": "^0.0.12"
   },

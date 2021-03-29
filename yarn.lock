@@ -924,6 +924,13 @@
   resolved "https://registry.yarnpkg.com/@hydrophobefireman/qwc/-/qwc-0.0.6.tgz#e1028ffa3ad0c9f05afb368b03cb10082c84d68e"
   integrity sha512-ofxA3P5Ztx2y+fvJ6nFrWnuimUSjOphmE+7klrgqpDWgfB1t9wPGo51jmGb/eSMzIhPM1TV98//+/WkkSGE0FQ==
 
+"@hydrophobefireman/ui-anim@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@hydrophobefireman/ui-anim/-/ui-anim-0.0.1.tgz#b8c5ed312503b3dd912daa984640ad0ad777f994"
+  integrity sha512-9n+rMvkuUPVnel3vmtUt4WkGGbvA719rtaUwyePSABCOqHWJVQshyUUeGdzxkfylHl+C5SpGB/AULoQx4v0RpA==
+  dependencies:
+    "@hydrophobefireman/ui-lib" "^1.8.7"
+
 "@hydrophobefireman/ui-lib@^1.8.7":
   version "1.8.7"
   resolved "https://registry.yarnpkg.com/@hydrophobefireman/ui-lib/-/ui-lib-1.8.7.tgz#ebd01f8cfb81ec7e2535d5a7c81dc6353146b3a2"
