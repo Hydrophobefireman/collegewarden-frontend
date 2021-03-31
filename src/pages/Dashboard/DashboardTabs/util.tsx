@@ -56,6 +56,7 @@ interface OpenFileProps {
   setMessage: SetMessage;
   password: string;
   setOpen(a: any): void;
+  download: boolean;
 }
 export function openFileExternally({
   setDownloading,
@@ -64,6 +65,7 @@ export function openFileExternally({
   setMessage,
   password,
   setOpen,
+  download,
 }: OpenFileProps) {
   setDownloading("downloading file..");
   requests
@@ -87,11 +89,16 @@ export function openFileExternally({
       }
       const blob = new Blob([ret], { type: getFileType(openFile, password) });
       const url = URL.createObjectURL(blob);
-      const a = Object.assign(document.createElement("a"), {
-        target: "_blank",
-        href: url,
-        download: getFileName(openFile, password) || "download",
-      });
+      const a = Object.assign(
+        document.createElement("a"),
+        {
+          target: "_blank",
+          href: url,
+        },
+        download
+          ? { download: getFileName(openFile, password) || "download" }
+          : null
+      );
       a.click();
       // $req(() => URL.revokeObjectURL(url));
       setOpen(null);

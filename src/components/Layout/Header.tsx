@@ -9,7 +9,7 @@ import { css } from "catom";
 import { headerActionButtonCss } from "./Layout.styles";
 import { useLocation } from "../../customHooks";
 import { useSharedStateValue } from "statedrive";
-import { ImportIcon } from "../Icons/Import";
+
 import { CollegeIcon } from "../Icons/College";
 
 export function Header() {

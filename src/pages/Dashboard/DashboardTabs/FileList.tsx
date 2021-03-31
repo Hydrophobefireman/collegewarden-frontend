@@ -113,21 +113,23 @@ function FileInfoRenderer({
   setDelete(): void;
 }) {
   const [downloadingState, setDownloading] = useState<string>(null);
+  const extProps = {
+    abort,
+    openFile,
+    password,
+    setDownloading,
+    setMessage,
+    setOpen,
+  };
   return (
     openFile && (
       <FileInfo
         downloadingState={downloadingState}
         openFile={openFile}
         openFileExternally={() =>
-          openFileExternally({
-            abort,
-            openFile,
-            password,
-            setDownloading,
-            setMessage,
-            setOpen,
-          })
+          openFileExternally({ ...extProps, download: false })
         }
+        downloadFile={() => openFileExternally({ ...extProps, download: true })}
         password={password}
         setDelete={setDelete}
         setOpen={setOpen}
