@@ -45,7 +45,7 @@ export function searchItems(needle: string, haystack: GlCollegeData[]) {
     .filter((next) => next.$search.some((x) => x.includes(cleaned)))
     .slice(0, LIMIT);
 }
-interface SetMessage {
+export interface SetMessage {
   (a: { message?: string; isError?: boolean }): void;
 }
 
@@ -90,9 +90,10 @@ export function openFileExternally({
       const a = Object.assign(document.createElement("a"), {
         target: "_blank",
         href: url,
+        download: getFileName(openFile, password) || "download",
       });
       a.click();
-      $req(() => URL.revokeObjectURL(url));
+      // $req(() => URL.revokeObjectURL(url));
       setOpen(null);
     });
 }
@@ -121,18 +122,20 @@ export function wrapUpload(
 export function searchFiles(
   search: string,
   password: string,
-  unFilteredUnsortedfilesAndNotes: FileData[],
-  setFilteredData: (d: FileData[]) => void
+  unFilteredUnsortedfilesAndNotes: FileData[]
 ) {
   const cleaned = clean(search);
-  if (!cleaned || !password)
-    return setFilteredData(unFilteredUnsortedfilesAndNotes);
+  if (!cleaned || !password) return unFilteredUnsortedfilesAndNotes;
   if (unFilteredUnsortedfilesAndNotes) {
     const d = unFilteredUnsortedfilesAndNotes.filter((x) => {
       const val =
         getFileName(x, password) || getDecryptedFileProp(x, password, "title");
       return clean(val).includes(cleaned);
     });
-    setFilteredData(d);
+    return d;
   }
+}
+
+export function isNote(x: string) {
+  return x === "x-collegewarden/note";
 }

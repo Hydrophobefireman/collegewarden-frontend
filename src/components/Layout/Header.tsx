@@ -31,13 +31,7 @@ export function Header() {
             Hi, <span class={bold}>{data.name}</span>
           </div>
           <div class={css({ display: "flex", justifyContent: "space-evenly" })}>
-            {loc !== "/import" ? (
-              <A href="/import" class={css({ textDecoration: "none" })}>
-                <button class={[hoverable, headerActionButtonCss]}>
-                  <ImportIcon size="1.2rem" /> Import
-                </button>
-              </A>
-            ) : (
+            {loc !== "/import" ? null : (
               <A href="/dashboard" class={css({ textDecoration: "none" })}>
                 <button class={[hoverable, headerActionButtonCss]}>
                   <CollegeIcon size="1.2rem" /> Dash

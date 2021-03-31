@@ -36,7 +36,7 @@ export const authData = createState<UserData>({
 
 export const colleges = createState<CollegeData[]>({ initialValue: null });
 
-export const files = createState<FileData[]>({ initialValue: null });
+export const fileAtom = createState<FileData[]>({ initialValue: null });
 
 export const passwordData = createState<string>({ initialValue: null });
 

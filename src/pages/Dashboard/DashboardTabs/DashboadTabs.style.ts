@@ -169,3 +169,8 @@ export const openPortalCss = [
     textDecoration: "none",
   }),
 ];
+
+export const fileTypeHeading = [
+  bold,
+  css({ color: "var(--current-fg)", fontSize: "2rem" }),
+].join(" ");

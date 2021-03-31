@@ -1,6 +1,6 @@
 import * as requests from "../util/http/requests";
 
-import { colleges, files, passwordData } from "../state";
+import { colleges, fileAtom, passwordData } from "../state";
 import { decrypt, decryptJson } from "./decrypt";
 import { get, set } from "statedrive";
 import {
@@ -24,7 +24,7 @@ export async function reEncryptUserData(
   const collegeData = get(colleges);
   const errors = new FakeSet<string>();
   await getFileList();
-  const fileData = get(files);
+  const fileData = get(fileAtom);
   return await Promise.all(
     fileData.map(async (x) => {
       const id = x.file_id;

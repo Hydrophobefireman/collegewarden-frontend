@@ -69,7 +69,7 @@ export function NoFilesFound({
       <div>no files found</div>
       <div class={css({ marginTop: "3rem" })}>
         <div>
-          <UploadFiles onClick={() => wrapUpload(upload(password))} />
+          <UploadFiles onClick={() => wrapUpload(upload(password, null))} />
           <UploadNotes onClick={() => setNotes(true)} />
         </div>
       </div>

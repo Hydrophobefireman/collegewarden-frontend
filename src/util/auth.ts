@@ -5,7 +5,7 @@ import {
   authData,
   colleges,
   didFetch,
-  files,
+  fileAtom,
 } from "../state";
 import { get, set } from "statedrive";
 
@@ -42,7 +42,7 @@ const auth = {
     set(didFetch, true);
     set(authData, null);
     set(colleges, null);
-    set(files, null);
+    set(fileAtom, null);
     redirect("/login");
   },
 };

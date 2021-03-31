@@ -1,6 +1,6 @@
 import * as requests from "./http/requests";
 
-import { FileData, files } from "../state";
+import { FileData, fileAtom } from "../state";
 import { dec, enc } from "../crypto/util";
 import { encrypt, encryptJson } from "../crypto/encrypt";
 import { fileRoutes, userRoutes } from "./http/api_routes";
@@ -27,7 +27,7 @@ export async function uploadNoteToServer({
   const encData = await encryptJson({ note: notes }, password, {
     title: func(title),
     preview: func(preview),
-    ts: func(+new Date() + ""),
+    ts: func(`${+new Date()}`),
     type: func("x-collegewarden/note"),
   });
   const { encryptedBuf, meta } = encData;
@@ -46,6 +46,7 @@ export async function uploadFileToServer(
   const { encryptedBuf, meta } = await encrypt(buf, password, {
     name: fn(name),
     type: fn(type),
+    ts: fn(`${+new Date()}`),
   });
   const res = requests.postBinary(url, encryptedBuf, {
     "x-cw-iv": meta,
@@ -60,7 +61,7 @@ export async function uploadFileToServer(
 
 export async function upload(
   password: string,
-  fileData?: File[]
+  fileData: File[]
 ): Promise<{ data: unknown; error?: string; name: string }[]> {
   const data = await getDataFromUser(fileData, "arrayBuffer");
   return Promise.all(
@@ -95,6 +96,7 @@ interface CacheKeys {
   preview?: string;
   title?: string;
   ts?: string;
+  schema_version?: string;
 }
 
 const wm = new FakeWeakMap<FileData, CacheKeys>();
@@ -104,7 +106,10 @@ export function evictWeakMapCache(f: FileData) {
 }
 
 export function getFileName(data: FileData, password: string): string {
-  return getDecryptedFileProp(data, password, "name");
+  return (
+    getDecryptedFileProp(data, password, "name") ||
+    getDecryptedFileProp(data, password, "title")
+  );
 }
 
 export function getFileType(data: FileData, password: string): string {
@@ -126,13 +131,15 @@ export function getDecryptedFileProp(
   if (cache[prop]) {
     return cache[prop];
   }
-  const ret = getDecryptedMetaObject(data, password, prop, def || "");
-  cache[prop] = ret;
-  wm.set(data, cache);
+  const ret = getDecryptedMetaWithoutCache(data, password, prop, def || "");
+  if (ret) {
+    cache[prop] = ret;
+    wm.set(data, cache);
+  }
   return ret;
 }
 
-function getDecryptedMetaObject(
+export function getDecryptedMetaWithoutCache(
   data: FileData,
   password: string,
   field: keyof CacheKeys,
@@ -146,7 +153,7 @@ export function deleteFile(f: FileData, fList: FileData[]) {
   const file_id = f.file_id;
   requests.postJSON(fileRoutes.delete, { file_id });
   const xx = fList.filter((x) => x.file_id != f.file_id);
-  set(files, xx);
+  set(fileAtom, xx);
 }
 
 export function getFileList(setMessage?: TabProps["setMessage"]) {
@@ -158,7 +165,7 @@ export function getFileList(setMessage?: TabProps["setMessage"]) {
       }
       const data = f.data;
       if (data) {
-        set(files, data.files);
+        set(fileAtom, data.files);
       }
     });
 }

@@ -5,7 +5,7 @@ import {
   FileData,
   colleges,
   didFetch,
-  files,
+  fileAtom,
   passwordData,
 } from "../../state";
 import {
@@ -99,7 +99,7 @@ export default function Dashboard(props: DashboardProps) {
       if (resp.error) {
         setLoading(false);
         setPass("");
-        const prevFiles = get(files);
+        const prevFiles = get(fileAtom);
         if (prevFiles && prevFiles.length) {
           // the weakmap has erroneously cached
           // the incorrectly decrypted filenames

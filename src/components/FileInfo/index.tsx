@@ -64,7 +64,7 @@ export function FileInfo({
             ref={buttonFocus}
           >
             <ExternalLinkIcon />
-            open
+            Open
           </button>
         </div>
       </div>

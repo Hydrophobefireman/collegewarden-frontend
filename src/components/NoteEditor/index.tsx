@@ -1,6 +1,6 @@
 import * as requests from "../../util/http/requests";
 
-import { FileData, files } from "../../state";
+import { FileData, fileAtom } from "../../state";
 import {
   deleteFile,
   evictWeakMapCache,
@@ -74,7 +74,7 @@ export function NoteEditor({
       if (curr && old != curr) {
         meta = curr;
         // data.file_enc_meta = curr;
-        set(files, (old) =>
+        set(fileAtom, (old) =>
           old.map((x) => {
             if (x.file_id === data.file_id) {
               x.file_enc_meta = curr;
