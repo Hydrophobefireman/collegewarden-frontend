@@ -16,7 +16,13 @@ import {
   getFileType,
   upload,
 } from "@/util/fileUtil";
-import { RefType, useState } from "@hydrophobefireman/ui-lib";
+import { FakeSet } from "@hydrophobefireman/j-utils";
+import {
+  RefType,
+  useEffect,
+  useMemo,
+  useState,
+} from "@hydrophobefireman/ui-lib";
 import { css } from "catom";
 import { cardWrapper, fileTypeHeading } from "./DashboadTabs.style";
 import { isNote, openFileExternally, SetMessage, wrapUpload } from "./util";
@@ -112,6 +118,7 @@ function FileInfoRenderer({
   setOpen(x: FileData): void;
   setDelete(): void;
 }) {
+  const urlSet = useObjectUrlSet();
   const [downloadingState, setDownloading] = useState<string>(null);
   const extProps = {
     abort,
@@ -120,6 +127,7 @@ function FileInfoRenderer({
     setDownloading,
     setMessage,
     setOpen,
+    urlSet,
   };
   return (
     openFile && (
@@ -232,3 +240,10 @@ function FileListRenderer({
   );
 }
 const truthyArr = (x: any[]) => x && x.length > 0;
+
+function useObjectUrlSet() {
+  const urlSet = useMemo(() => new FakeSet<string>(), []);
+  useEffect(() => () => urlSet.forEach((x) => URL.revokeObjectURL(x)), []);
+
+  return urlSet;
+}
