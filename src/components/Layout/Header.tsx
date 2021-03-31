@@ -14,7 +14,7 @@ import { CollegeIcon } from "../Icons/College";
 
 export function Header() {
   const data = useSharedStateValue(authData);
-  const loc = useLocation();
+  const { path: loc } = useLocation();
   return (
     <header
       class={css({

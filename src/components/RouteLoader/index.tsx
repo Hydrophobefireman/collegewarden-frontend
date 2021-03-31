@@ -24,10 +24,12 @@ const componentMap = {
   "/security": () => import("@/pages/Security").then(getDefault),
   "/import": () => import("@/pages/Import").then(getDefault),
 };
-
+const routerFlag = new URLSearchParams(location.search).has(
+  "useInMemoryRouter"
+);
 export function RouteLoader() {
   return (
-    <Router fallbackComponent={NotFound}>
+    <Router fallbackComponent={NotFound} inMemoryRouter={routerFlag}>
       {entries(componentMap).map(([path, comp]) => (
         <Path match={path} component={RouteComponent} render={comp} />
       ))}

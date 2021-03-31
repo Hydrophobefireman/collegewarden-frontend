@@ -1021,10 +1021,10 @@
   resolved "https://registry.yarnpkg.com/@hydrophobefireman/ui-anim/-/ui-anim-0.0.7.tgz#f6ffd1486c0738a3407303d1958e0595516a6acc"
   integrity sha512-89lyFFnORnju+RktbqSf5+mi44uJF/tOg+0ryUA1taKte1TFJ5ovnqnIoyGYRnxunjNkc/nPKKf6tChAYcF/7Q==
 
-"@hydrophobefireman/ui-lib@^1.8.8":
-  version "1.8.8"
-  resolved "https://registry.yarnpkg.com/@hydrophobefireman/ui-lib/-/ui-lib-1.8.8.tgz#034eb65f79aa69efab78fa0d60a761b3a9fdbb34"
-  integrity sha512-1Tcx4Xd0T0MlRPOXAOOmToZjpzcFmInb+QG3s4X37YBwL15/5vIiQlM6DltgI/NKgmvalwHjIS4Q13k9swpM8Q==
+"@hydrophobefireman/ui-lib@^1.8.9":
+  version "1.8.9"
+  resolved "https://registry.yarnpkg.com/@hydrophobefireman/ui-lib/-/ui-lib-1.8.9.tgz#9fd0198b4f959468acf8d4e6cfa6b2996ea5d0a7"
+  integrity sha512-e83eWjMF1zWKmR/i+W9yy3JBKnQ2DNVwB9K7w0mgK9l6Zz0GuUnH6RI+DilSTMmQCQ5Yinp5Y0m4062Dem1r5Q==
 
 "@types/eslint-scope@^3.7.0":
   version "3.7.0"

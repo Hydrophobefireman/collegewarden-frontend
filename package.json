@@ -19,7 +19,7 @@
     "@hydrophobefireman/j-utils": "^2.1.6",
     "@hydrophobefireman/qwc": "^0.0.6",
     "@hydrophobefireman/ui-anim": "^0.0.7",
-    "@hydrophobefireman/ui-lib": "^1.8.8",
+    "@hydrophobefireman/ui-lib": "^1.8.9",
     "statedrive": "^0.0.12"
   },
   "devDependencies": {

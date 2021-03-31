@@ -29,7 +29,8 @@ export async function reEncryptUserData(
     fileData.map(async (x) => {
       const id = x.file_id;
       let name = getFileName(x, oldPassword);
-      let isNote = _isNote(getFileType(x, oldPassword));
+      const fileType = getFileType(x, oldPassword);
+      let isNote = _isNote(fileType);
 
       function removeCurrentFile() {
         requests.postJSON(fileRoutes.delete, { file_id: id });
@@ -58,7 +59,7 @@ export async function reEncryptUserData(
           {
             buf: decrypted,
             name,
-            type: getFileType(x, oldPassword),
+            type: fileType,
           },
           newPassword,
           fileRoutes.edit(id)

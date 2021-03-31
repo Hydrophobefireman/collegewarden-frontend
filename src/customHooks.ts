@@ -14,8 +14,8 @@ function useMount(fn: () => unknown | (() => void)) {
   return useEffect(fn, []);
 }
 
-const getPath = () => Router.path + Router.qs;
-export const useLocation = (): string => {
+const getPath = () => ({ path: Router.path, qs: Router.qs });
+export const useLocation = (): { path: string; qs: string } => {
   const [loc, setLoc] = useState(getPath);
   useMount(() => {
     const current = () => setLoc(getPath);

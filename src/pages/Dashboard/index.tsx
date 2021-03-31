@@ -38,7 +38,7 @@ interface UserAlert {
   isError?: boolean;
 }
 export default function Dashboard(props: DashboardProps) {
-  const location = useLocation();
+  const { path: location } = useLocation();
   const isLoggedIn = useRequiredAuthentication("/dashboard");
   const [message, setMessage] = useState<UserAlert>({
     message: "",
@@ -48,7 +48,7 @@ export default function Dashboard(props: DashboardProps) {
   const tab = props.params.tab || "colleges";
   useEffect(() => {
     const expectedPath = `/dashboard/${tab}`;
-    if (Router.path !== expectedPath && isLoggedIn) {
+    if (location !== expectedPath && isLoggedIn) {
       console.log("redirecting");
       redirect(expectedPath);
     }
