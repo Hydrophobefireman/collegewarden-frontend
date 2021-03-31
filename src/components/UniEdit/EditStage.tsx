@@ -103,7 +103,7 @@ export function EditStage({
   }
   return (
     <ModalLayout close={close}>
-      <div>
+      <div class={css({ textAlign: "left" })}>
         <b class={modalCollegeName}>{glCollegeData.name}</b>
         <section class={modalSection}>
           <div>

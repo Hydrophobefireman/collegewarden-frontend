@@ -1,9 +1,9 @@
-import { actionButton, center, mask } from "../../../styles";
+import { actionButton, center, mask } from "../../styles";
 
-import { NotesIcon } from "../../../components/Icons/Notes";
-import { UploadIcon } from "../../../components/Icons/Upload";
+import { NotesIcon } from "../Icons/Notes";
+import { UploadIcon } from "../Icons/Upload";
 import { css } from "catom";
-import { upload } from "../../../util/fileUtil";
+import { upload } from "../../util/fileUtil";
 
 const uploadButtonOverride = {
   display: "inline-flex",

@@ -65,10 +65,8 @@ export function useRequiredAuthentication(path: string): boolean {
   return isLoggedIn;
 }
 const preventDefault = (e: Event) => e.preventDefault();
-export function useFileDrop(
-  el?: HTMLElement
-): [File[] | null, (a: null) => void] {
-  el = el || document.body;
+export function useFileDrop(el?: HTMLElement): [File[] | null, () => void] {
+  el = el || document.documentElement;
   const [files, setFiles] = useState(null);
   useEffect(() => {
     const onDrop = (e: DragEvent) => {
@@ -92,5 +90,5 @@ export function useFileDrop(
       el.removeEventListener("dragover", preventDefault);
     };
   }, []);
-  return [files && files.length ? files : null, setFiles];
+  return [files && files.length ? files : null, () => setFiles(null)];
 }

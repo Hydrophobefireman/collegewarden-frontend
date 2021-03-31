@@ -3,7 +3,10 @@ export function nextEvent(obj: EventTarget, evt: string) {
     obj.addEventListener(evt, resolve, { once: true })
   );
 }
-export async function getArrayBufferFromUser(fileData?: File[]) {
+export async function getDataFromUser(
+  fileData: File[] | null,
+  mode: "arrayBuffer" | "string"
+) {
   let files: File[] = [];
   if (!fileData) {
     const input = document.createElement("input");
@@ -18,7 +21,10 @@ export async function getArrayBufferFromUser(fileData?: File[]) {
   }
   return Promise.all(
     files.map(async (file) => ({
-      buf: await asArrayBuffer(file),
+      buf:
+        mode === "arrayBuffer"
+          ? await asArrayBuffer(file)
+          : await asString(file),
       name: file.name,
       type: file.type || "application/octet-stream",
     }))
@@ -30,5 +36,13 @@ function asArrayBuffer(f: File): Promise<ArrayBuffer> {
     const reader = new FileReader();
     reader.onload = () => r(reader.result as ArrayBuffer);
     reader.readAsArrayBuffer(f);
+  });
+}
+
+function asString(f: File): Promise<string> {
+  return new Promise((r) => {
+    const reader = new FileReader();
+    reader.onload = () => r(reader.result as string);
+    reader.readAsText(f);
   });
 }

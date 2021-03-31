@@ -1,5 +1,5 @@
 // TODO restructure
-import { FileData, files, passwordData } from "../../../state";
+import { FileData, files, passwordData } from "@/state";
 import {
   FileEntry,
   deleteFile,
@@ -8,13 +8,13 @@ import {
   getFileName,
   getFileType,
   upload,
-} from "../../../util/fileUtil";
+} from "@/util/fileUtil";
 import {
   FileTabLoader,
   NoFilesFound,
   UploadFiles,
   UploadNotes,
-} from "./FileTabActions";
+} from "@/components/FileActions";
 import {
   RefType,
   useEffect,
@@ -23,16 +23,16 @@ import {
 } from "@hydrophobefireman/ui-lib";
 import { openFileExternally, searchFiles, wrapUpload } from "./util";
 
-import { AnimatedInput } from "../../../components/AnimatedInput";
-import { DeleteConfirmation } from "../../../components/DeleteConfirmation";
-import { FileInfo } from "../../../components/FileInfo";
-import { Note } from "../../../components/FileInfo/Note";
-import { NoteEditor } from "../../../components/NoteEditor";
+import { AnimatedInput } from "@/components/AnimatedInput";
+import { DeleteConfirmation } from "@/components/DeleteConfirmation";
+import { FileInfo } from "@/components/FileInfo";
+import { Note } from "@/components/FileInfo/Note";
+import { NoteEditor } from "@/components/NoteEditor";
 import { TabProps } from "../types";
-import { bold } from "../../../styles";
+import { bold } from "@/styles";
 import { cardWrapper } from "./DashboadTabs.style";
 import { css } from "catom";
-import { useFileDrop } from "../../../customHooks";
+import { useFileDrop } from "@/customHooks";
 import { useSharedStateValue } from "statedrive";
 
 export function Files({ setMessage }: TabProps) {
@@ -51,7 +51,7 @@ export function Files({ setMessage }: TabProps) {
   useEffect(() => {
     if (!filesDropped || !password) return;
     wrapUpload(upload(password, filesDropped), setMessage);
-    setDroppedFiles(null);
+    setDroppedFiles();
   }, [filesDropped, password]);
 
   useEffect(() => {

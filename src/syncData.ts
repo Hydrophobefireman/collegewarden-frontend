@@ -1,6 +1,6 @@
 import * as requests from "./util/http/requests";
 
-import { colleges, didFetch, passwordData } from "./state";
+import { CollegeData, colleges, didFetch, passwordData } from "./state";
 import { get, set, subscribe } from "statedrive";
 
 import { encryptJson } from "./crypto/encrypt";
@@ -12,21 +12,25 @@ export function syncOnStateUpdates() {
       set(didFetch, false);
       return;
     }
-    const n = newData.map((x) => {
-      return {
-        ...x,
-        data: {
-          id: x.data.id,
-          __internal: { id: x.data.id, name: x.data.name },
-        } as any,
-      };
-    });
+    uploadData(newData);
+  });
+}
 
-    const data = await encryptJson(n, get(passwordData));
+export async function uploadData(newData: CollegeData[]) {
+  const n = newData.map((x) => {
+    return {
+      ...x,
+      data: {
+        id: x.data.id,
+        __internal: { id: x.data.id, name: x.data.name },
+      } as any,
+    };
+  });
 
-    requests.postBinary(fileRoutes.uploadInfoDict, data.encryptedBuf, {
-      "x-cw-iv": data.meta,
-      "x-cw-data-type": "encrypted_json",
-    });
+  const data = await encryptJson(n, get(passwordData));
+
+  return requests.postBinary(fileRoutes.uploadInfoDict, data.encryptedBuf, {
+    "x-cw-iv": data.meta,
+    "x-cw-data-type": "encrypted_json",
   });
 }

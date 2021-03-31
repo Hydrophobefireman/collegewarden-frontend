@@ -9,6 +9,8 @@ import { css } from "catom";
 import { headerActionButtonCss } from "./Layout.styles";
 import { useLocation } from "../../customHooks";
 import { useSharedStateValue } from "statedrive";
+import { ImportIcon } from "../Icons/Import";
+import { CollegeIcon } from "../Icons/College";
 
 export function Header() {
   const data = useSharedStateValue(authData);
@@ -29,6 +31,19 @@ export function Header() {
             Hi, <span class={bold}>{data.name}</span>
           </div>
           <div class={css({ display: "flex", justifyContent: "space-evenly" })}>
+            {loc !== "/import" ? (
+              <A href="/import" class={css({ textDecoration: "none" })}>
+                <button class={[hoverable, headerActionButtonCss]}>
+                  <ImportIcon size="1.2rem" /> Import
+                </button>
+              </A>
+            ) : (
+              <A href="/dashboard" class={css({ textDecoration: "none" })}>
+                <button class={[hoverable, headerActionButtonCss]}>
+                  <CollegeIcon size="1.2rem" /> Dash
+                </button>
+              </A>
+            )}
             {loc !== "/security" && (
               <A href="/security" class={css({ textDecoration: "none" })}>
                 <button class={[hoverable, headerActionButtonCss]}>

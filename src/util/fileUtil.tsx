@@ -8,7 +8,7 @@ import { fileRoutes, userRoutes } from "./http/api_routes";
 import { FakeWeakMap } from "@hydrophobefireman/j-utils";
 import { TabProps } from "../pages/Dashboard/types";
 import { fileCard } from "../pages/Dashboard/DashboardTabs/DashboadTabs.style";
-import { getArrayBufferFromUser } from "./bufUtil";
+import { getDataFromUser } from "./bufUtil";
 import { set } from "statedrive";
 
 export async function uploadNoteToServer({
@@ -62,9 +62,15 @@ export async function upload(
   password: string,
   fileData?: File[]
 ): Promise<{ data: unknown; error?: string; name: string }[]> {
-  const data = await getArrayBufferFromUser(fileData);
+  const data = await getDataFromUser(fileData, "arrayBuffer");
   return Promise.all(
-    data.map((x) => uploadFileToServer(x, password, fileRoutes.upload))
+    data.map((x) =>
+      uploadFileToServer(
+        x as { buf: ArrayBuffer; type: string; name: string },
+        password,
+        fileRoutes.upload
+      )
+    )
   ).then((x) => {
     getFileList();
     return x;
