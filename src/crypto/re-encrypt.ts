@@ -4,7 +4,6 @@ import { colleges, fileAtom, passwordData } from "../state";
 import { decrypt, decryptJson } from "./decrypt";
 import { get, set } from "statedrive";
 import {
-  getDecryptedFileProp,
   getFileList,
   getFileName,
   getFileType,
@@ -15,6 +14,7 @@ import {
 import { FakeSet } from "@hydrophobefireman/j-utils";
 import { fileRoutes } from "../util/http/api_routes";
 import { guard } from "../util/guard";
+import { isNote as _isNote } from "@/pages/Dashboard/DashboardTabs/util";
 
 export async function reEncryptUserData(
   updaterFunction: (latestUpdate: string) => void,
@@ -29,13 +29,8 @@ export async function reEncryptUserData(
     fileData.map(async (x) => {
       const id = x.file_id;
       let name = getFileName(x, oldPassword);
-      let isNote = false;
-      let title: string;
-      if (!name) {
-        title = getDecryptedFileProp(x, oldPassword, "title");
-        isNote = true;
-        name = title;
-      }
+      let isNote = _isNote(getFileType(x, oldPassword));
+
       function removeCurrentFile() {
         requests.postJSON(fileRoutes.delete, { file_id: id });
         updaterFunction(
@@ -76,7 +71,7 @@ export async function reEncryptUserData(
         await uploadNoteToServer({
           notes: note,
           password: newPassword,
-          title,
+          title: name,
           url: fileRoutes.edit(id),
         });
       }

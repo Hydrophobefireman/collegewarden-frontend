@@ -6,6 +6,7 @@ import {
   evictWeakMapCache,
   getDecryptedFileProp,
   getFileList,
+  getFileName,
   uploadNoteToServer,
 } from "../../util/fileUtil";
 import { inlineContainer, notesArea } from "../UniEdit/UniEdit.styles";
@@ -36,7 +37,7 @@ export function NoteEditor({
   password,
   setMessage,
 }: NoteEditorProps) {
-  const getTitle = () => getDecryptedFileProp(data, password, "title");
+  const getTitle = () => getFileName(data, password);
   const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState(data ? getTitle : "");
   const [notes, setNotes] = useState<string>(null);

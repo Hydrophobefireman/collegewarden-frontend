@@ -138,8 +138,7 @@ export function searchFiles(
   if (!cleaned || !password) return unFilteredUnsortedfilesAndNotes;
   if (unFilteredUnsortedfilesAndNotes) {
     const d = unFilteredUnsortedfilesAndNotes.filter((x) => {
-      const val =
-        getFileName(x, password) || getDecryptedFileProp(x, password, "title");
+      const val = getFileName(x, password);
       return clean(val).includes(cleaned);
     });
     return d;
