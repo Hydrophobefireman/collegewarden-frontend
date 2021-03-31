@@ -190,16 +190,18 @@ function useCdata(data: any[], format: any[]) {
       if (!obj.data.name) {
         return setCData(null);
       }
-      Object_assign(
-        {
-          applied: true,
-          decisionTimeline: "RD",
-          accepted: "Pending",
-          appliedWithFinAid: false,
-        } as Partial<CollegeData>,
-        obj
+
+      tmp.push(
+        Object_assign(
+          {
+            applied: true,
+            decisionTimeline: "RD",
+            accepted: "Pending",
+            appliedWithFinAid: false,
+          } as Partial<CollegeData>,
+          obj
+        )
       );
-      tmp.push(obj);
     }
     setCData(tmp);
   }, [data, format]);
