@@ -22,15 +22,22 @@ export function useValidInput(file: ImportFile) {
   const [error, setError] = useState("");
   const [arrData, setData] = useState<Array<any[]>>(null);
   useEffect(() => {
-    const { buf, type } = file;
+    const { buf, name, type } = file;
     let arr: Array<any>;
     try {
       if (type.includes("csv")) {
-        arr = csvToArray(buf)//.map((x) => x.filter(Boolean));
+        arr = csvToArray(buf); //.map((x) => x.filter(Boolean));
       } else if (type.includes("json")) {
         arr = JSON.parse(buf);
       } else {
-        throw new Error("Unsupported file type..");
+        try {
+          arr = JSON.parse(buf);
+        } catch (e) {
+          arr = csvToArray(buf);
+          if (!arr.length || arr[0].length <= 1) {
+            throw new Error("Unsupported file type");
+          }
+        }
       }
       setData(arr);
     } catch (e: unknown) {
