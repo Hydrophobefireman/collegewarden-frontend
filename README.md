@@ -13,5 +13,9 @@ All information is encrypted locally using your password and then uploaded on th
 The [backend](https://github.com/Hydrophobefireman/collegewarden-backend) does not even know which colleges you applied to.
 
 
+# Built With
 
-
+Frontend: 
+  - [UI-Lib](https://github.com/hydrophobefireman/ui-lib) - UI framework
+  - [Catom](https://github.com/hydrophobefireman/catom) - efficient atomic css
+  - [statedrive](https://github.com/hydrophobefireman/statedrive) - Shared global state
