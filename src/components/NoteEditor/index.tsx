@@ -1,6 +1,11 @@
-import * as requests from "../../util/http/requests";
+import {css} from "catom";
+import {set} from "statedrive";
 
-import { FileData, fileAtom } from "../../state";
+import {useEffect, useRef, useState} from "@hydrophobefireman/ui-lib";
+
+import {decryptJson} from "../../crypto/decrypt";
+import {FileData, fileAtom} from "../../state";
+import {actionButton} from "../../styles";
 import {
   deleteFile,
   evictWeakMapCache,
@@ -9,26 +14,21 @@ import {
   getFileName,
   uploadNoteToServer,
 } from "../../util/fileUtil";
-import { inlineContainer, notesArea } from "../UniEdit/UniEdit.styles";
-import { useEffect, useState } from "@hydrophobefireman/ui-lib";
-
-import { AnimatedInput } from "../AnimatedInput";
-import { DeleteConfirmation } from "../DeleteConfirmation";
-import { Form } from "../Form";
-import { ModalLayout } from "../Layout/ModalLayout";
-import { actionButton } from "../../styles";
-import { css } from "catom";
-import { decryptJson } from "../../crypto/decrypt";
-import { fileRoutes } from "../../util/http/api_routes";
-import { guard } from "../../util/guard";
-import { set } from "statedrive";
+import {guard} from "../../util/guard";
+import {fileRoutes} from "../../util/http/api_routes";
+import * as requests from "../../util/http/requests";
+import {AnimatedInput} from "../AnimatedInput";
+import {DeleteConfirmation} from "../DeleteConfirmation";
+import {Form} from "../Form";
+import {ModalLayout} from "../Layout/ModalLayout";
+import {inlineContainer, notesArea} from "../UniEdit/UniEdit.styles";
 
 interface NoteEditorProps {
   close(): void;
   data: FileData;
   list: FileData[];
   password: string;
-  setMessage(e: { isError?: boolean; message: string }): void;
+  setMessage(e: {isError?: boolean; message: string}): void;
 }
 export function NoteEditor({
   close,
@@ -37,12 +37,14 @@ export function NoteEditor({
   password,
   setMessage,
 }: NoteEditorProps) {
+  const isNewNote = data == null;
   const getTitle = () => getFileName(data, password);
   const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState(data ? getTitle : "");
   const [notes, setNotes] = useState<string>(null);
   const preview = data ? getDecryptedFileProp(data, password, "preview") : "";
   const [del, setDel] = useState(false);
+  const lastSavedNote = useRef<string>();
   useEffect(() => {
     if (!data) {
       return;
@@ -55,13 +57,13 @@ export function NoteEditor({
       return;
     }
     setTitle(getTitle);
-    const { result, controller, headers } = requests.getBinary(
+    const {result, controller, headers} = requests.getBinary(
       fileRoutes.download(data.file_id)
     );
     result.then(async (x) => {
       const h = await headers;
       if ("error" in x) {
-        return setMessage({ isError: true, message: x.error });
+        return setMessage({isError: true, message: x.error});
       }
       if (!guard(ArrayBuffer, x)) return;
       const buf = x as ArrayBuffer;
@@ -84,10 +86,11 @@ export function NoteEditor({
           })
         );
       }
-      decryptJson({ encryptedBuf: buf, meta }, password).then((x) => {
-        if (x.error) return setMessage({ isError: true, message: x.error });
-        const { note } = x;
+      decryptJson({encryptedBuf: buf, meta}, password).then((x) => {
+        if (x.error) return setMessage({isError: true, message: x.error});
+        const {note} = x;
         setNotes(note);
+        lastSavedNote.current = note;
       });
     });
     return () => controller.abort();
@@ -96,7 +99,7 @@ export function NoteEditor({
   async function sendNotes() {
     if (loading) return;
     setLoading(true);
-    setMessage({ message: "Uploading note" });
+    setMessage({message: "Uploading note"});
     const res = await uploadNoteToServer({
       notes,
       password,
@@ -115,6 +118,32 @@ export function NoteEditor({
   function deleteNote() {
     deleteFile(data, list);
     close();
+  }
+  const intervalRef = useRef<any>();
+  const [autosaveState, setAutoSaveState] = useState<
+    "saving" | "idle" | "unsaved"
+  >("idle");
+
+  function handleAutoSave(v: string) {
+    // if(isNewNote)return;
+    console.log("Clearing timeout");
+    clearTimeout(intervalRef.current);
+    if (v === lastSavedNote.current) return console.log("Equal..ignore");
+    intervalRef.current = setTimeout(async () => {
+      setAutoSaveState("saving");
+      const res = await uploadNoteToServer({
+        notes: v,
+        password,
+        title,
+        url: fileRoutes.edit(data.file_id),
+      });
+      lastSavedNote.current = v;
+      if (res.error) {
+        setAutoSaveState("unsaved");
+      } else {
+        setAutoSaveState("idle");
+      }
+    }, 1000);
   }
   if (del)
     return (
@@ -142,20 +171,39 @@ export function NoteEditor({
                 notes
               </b>
             </div>
-            <div class={css({ marginTop: "2rem" })}>
+            <div class={css({marginTop: "2rem"})}>
               <Form>
                 <AnimatedInput
                   labelText="note title"
                   onInput={setTitle}
                   value={title}
                 />
+                <div
+                  class={[
+                    css({
+                      textAlign: "center",
+                      fontSize: ".85rem",
+                    }),
+                    autosaveState === "idle" ? css({opacity: "0"}) : null,
+                  ]}
+                >
+                  {autosaveState === "saving"
+                    ? "Saving.."
+                    : autosaveState === "unsaved"
+                    ? "•"
+                    : "Idle"}
+                </div>
                 <div class={inlineContainer}>
                   <textarea
                     value={
                       notes == null ? (preview ? preview + "...." : "") : notes
                     }
-                    class={[notesArea, css({ height: "40vh" })]}
-                    onInput={(e) => setNotes(e.currentTarget.value)}
+                    class={[notesArea, css({height: "50vh"})]}
+                    onInput={(e) => {
+                      const v = e.currentTarget.value;
+                      setNotes(v);
+                      handleAutoSave(v);
+                    }}
                   ></textarea>
                   <div>
                     <button class={actionButton} onClick={sendNotes}>

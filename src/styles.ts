@@ -1,6 +1,6 @@
-import { css } from "catom";
+import {css} from "catom";
 
-export const heading = css({ fontSize: "3rem" });
+export const heading = css({fontSize: "3rem"});
 
 export const center = css({
   display: "flex",
@@ -14,8 +14,8 @@ export const cwHeading = css({
   marginTop: "15vh",
   marginBottom: "2rem",
 });
-export const bold = css({ fontWeight: "bold" });
-export const underlined = css({ textDecoration: "underline" });
+export const bold = css({fontWeight: "bold"});
+export const underlined = css({textDecoration: "underline"});
 
 export const hoverable = css({
   pseudo: {
@@ -65,8 +65,8 @@ export const actionButton = css({
   marginRight: "0.5rem",
   transition: "0.3s linear",
   pseudo: {
-    ":hover": { background: "var(--current-alpha)" },
-    ":focus": { background: "var(--current-alpha)" },
+    ":hover": {background: "var(--current-alpha)"},
+    ":focus": {background: "var(--current-alpha)"},
   },
 });
 export const actionButtonWrapper = css({
@@ -76,14 +76,26 @@ export const actionButtonWrapper = css({
   justifyContent: "flex-end",
 });
 
-export const modal = css({
+const _modal = css({
   boxShadow: "var(--box-shadow)",
   background: "var(--current-bg)",
-  width: "70%",
-  maxWidth: "450px",
-  padding: "2rem",
   borderRadius: "10px",
   animation: "scale_anim 0.1s linear",
   animationFillMode: "forwards",
   overflowY: "auto",
+  padding: "2rem",
 });
+export const modal = [
+  _modal,
+  css({
+    width: "70%",
+    maxWidth: "450px",
+  }),
+].join(" ");
+
+export const modalExpanded = [
+  _modal,
+  css({
+    width: "85%",
+  }),
+].join(" ");
