@@ -202,6 +202,7 @@ export function NoteEditor({
                     onInput={(e) => {
                       const v = e.currentTarget.value;
                       setNotes(v);
+                      if (isNewNote) return;
                       handleAutoSave(v);
                     }}
                   ></textarea>
